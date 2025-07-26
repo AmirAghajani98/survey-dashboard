@@ -42,60 +42,60 @@ const Dashboard = () => {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <header className="bg-[#2d91a5] text-slate-900 p-4">
+      <header className="bg-[#97ceff] text-slate-900 p-4">
         <nav className="flex justify-between items-center">
-          <h1 className="text-xl font-bold text-slate-700">داشبورد</h1>
+          <h1 className="text-xl font-bold text-slate-900">داشبورد</h1>
           <div className="flex items-center space-x-4">
-            <button className="hover:underline text-slate-800">خروج</button>
-            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-slate-800 text-sm">👤</span>
+            <button className="hover:underline text-blue-950">خروج</button>
+            <div className="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
+              <span className="text-blue-950 text-sm">👤</span>
             </div>
           </div>
         </nav>
       </header>
 
       <div className="flex flex-1">
-        <aside className="w-64 bg-[#4bb8ce] text-slate-950 p-4">
-          <h2 className="text-xl font-bold mb-4">منو</h2>
+        <aside className="w-64 bg-[#6bb8ff] text-blue-950 p-4">
+          <h2 className="text-xl font-bold mb-4 text-blue-950">منو</h2>
           <nav>
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
-                <HomeIcon className="w-5 h-5 text-slate-900" />
+                <HomeIcon className="w-8 h-8 text-slate-700" />
                 <button
                   onClick={() => setSelectedForm("home")}
-                  className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
+                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                 >
                   صفحه اصلی
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <ChartBarIcon className="w-5 h-5 text-slate-900" />
+                <ChartBarIcon className="w-8 h-8 text-slate-700" />
                 <button
                   onClick={() => setSelectedForm("report")}
-                  className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
+                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                 >
                   گزارشات
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <DocumentTextIcon className="w-5 h-5 text-slate-900" />
+                <DocumentTextIcon className="w-8 h-8 text-slate-700" />
                 <div className="relative w-full">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
+                    className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                   >
                     فرم‌ها
                   </button>
                   {isDropdownOpen && (
-                    <ul className="absolute left-0 mt-2 bg-gray-700 rounded shadow-lg w-full">
+                    <ul className="absolute left-0 mt-2 bg-blue-800 rounded shadow-lg w-full">
                       {forms.map((form, index) => (
-                        <li key={index} className="py-2 px-4 hover:bg-gray-600">
+                        <li key={index} className="py-2 px-4 hover:bg-blue-900">
                           <button
                             onClick={() => {
                               setSelectedForm(form.name);
                               setIsDropdownOpen(false);
                             }}
-                            className="text-left w-full"
+                            className="text-left w-full text-blue-950"
                           >
                             {form.name}
                           </button>
