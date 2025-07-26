@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import HouseholdForm from "./forms/household";
-import StatsCard from "./components/StatsCard";
 import Charts from "./components/Charts";
 import EmployeeSurvey from "./forms/employees";
+import {
+  HomeIcon,
+  ChartBarIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 const Dashboard = () => {
-  const [selectedForm, setSelectedForm] = useState("صفحه اصلی");
+  const [selectedForm, setSelectedForm] = useState("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const forms = [
@@ -37,61 +41,61 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="bg-gray-800 text-white p-4">
+    <main className="flex flex-col min-h-screen">
+      <header className="bg-[#97ceff] text-slate-900 p-4">
         <nav className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">داشبورد</h1>
+          <h1 className="text-xl font-bold text-slate-900">داشبورد</h1>
           <div className="flex items-center space-x-4">
-            <button className="hover:underline">خروج</button>
-            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm">👤</span>
+            <button className="hover:underline text-blue-950">خروج</button>
+            <div className="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
+              <span className="text-blue-950 text-sm">👤</span>
             </div>
           </div>
         </nav>
       </header>
 
       <div className="flex flex-1">
-        <aside className="w-64 bg-gray-800 text-white p-4">
-          <h2 className="text-xl font-bold mb-4">منو</h2>
+        <aside className="w-64 bg-[#6bb8ff] text-blue-950 p-4">
+          <h2 className="text-xl font-bold mb-4 text-blue-950">منو</h2>
           <nav>
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
-                <span>🏠</span>
+                <HomeIcon className="w-8 h-8 text-slate-700" />
                 <button
-                  onClick={() => setSelectedForm("صفحه اصلی")}
-                  className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                  onClick={() => setSelectedForm("home")}
+                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                 >
                   صفحه اصلی
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <span>📊</span>
+                <ChartBarIcon className="w-8 h-8 text-slate-700" />
                 <button
-                  onClick={() => setSelectedForm("گزارشات")}
-                  className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                  onClick={() => setSelectedForm("report")}
+                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                 >
                   گزارشات
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <span>📄</span>
+                <DocumentTextIcon className="w-8 h-8 text-slate-700" />
                 <div className="relative w-full">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                    className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
                   >
                     فرم‌ها
                   </button>
                   {isDropdownOpen && (
-                    <ul className="absolute left-0 mt-2 bg-gray-700 rounded shadow-lg w-full">
+                    <ul className="absolute left-0 mt-2 bg-blue-800 rounded shadow-lg w-full">
                       {forms.map((form, index) => (
-                        <li key={index} className="py-2 px-4 hover:bg-gray-600">
+                        <li key={index} className="py-2 px-4 hover:bg-blue-900">
                           <button
                             onClick={() => {
                               setSelectedForm(form.name);
                               setIsDropdownOpen(false);
                             }}
-                            className="text-left w-full"
+                            className="text-left w-full text-blue-950"
                           >
                             {form.name}
                           </button>
@@ -105,21 +109,16 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        <main className="flex-1 p-8">
-          {selectedForm === "صفحه اصلی" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-              <div className="lg:col-span-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <StatsCard title="تعداد کاربران" value={1200} />
-                <StatsCard title="تعداد فرم‌ها" value={15} />
-                <StatsCard title="میزان رضایت" value={85} />
-              </div>
-              <div className="lg:col-span-2">
+        <main className="flex p-8 w-full justify-between">
+          {selectedForm === "home" && (
+            <div className="flex w-full h-1/2 gap-x-4">
+              <div className="w-full">
                 <Charts />
               </div>
             </div>
           )}
-          {selectedForm !== "صفحه اصلی" && (
-            <div>
+          {selectedForm !== "home" && (
+            <div className="p-4 bg-white rounded shadow-md w-10/12 mx-auto">
               {forms.find((form) => form.name === selectedForm)?.component || (
                 <p>فرم انتخاب شده یافت نشد.</p>
               )}
@@ -127,7 +126,7 @@ const Dashboard = () => {
           )}
         </main>
       </div>
-    </div>
+    </main>
   );
 };
 

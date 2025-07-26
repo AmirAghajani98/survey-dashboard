@@ -18,25 +18,28 @@ export default function EmployeeSurvey() {
   };
 
   return (
-    <div className="w-10/12 mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-10 text-center">
+    <div className="w-full mx-auto p-6">
+      <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
         پرسشنامه HSE کارکنان
       </h1>
-      <form onSubmit={() => {}} className="space-y-6">
+      <form onSubmit={() => {}} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
-            <div key={key}>
-              <label htmlFor={key} className="block text-sm font-medium">
+            <div
+              key={key}
+              className="shadow-sm p-4 rounded-md border border-gray-200"
+            >
+              <label htmlFor={key} className="text-lg font-semibold">
                 {label}
               </label>
               <select
                 id={key}
                 name={key}
                 onChange={handleDemoChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
               >
                 {options.split(",").map((option) => (
-                  <option key={option} value={option}>
+                  <option key={option} value={option} className="text-base">
                     {option}
                   </option>
                 ))}
@@ -45,7 +48,7 @@ export default function EmployeeSurvey() {
           ))}
         </div>
 
-        <table className="table-auto border-collapse border border-gray-300 w-full mb-4">
+        <table className="border-collapse border border-gray-300 w-full mb-4">
           <thead>
             <tr>
               <th className="border border-gray-300 px-4 py-2">ردیف</th>
@@ -72,14 +75,16 @@ export default function EmployeeSurvey() {
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   {index + 1}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{question}</td>
+                <td className="border border-gray-300 px-4 py-3 text-base font-medium">
+                  {question}
+                </td>
                 {[1, 2, 3, 4, 5].map((score) => (
                   <td
                     key={score}
                     className="border border-gray-300 px-4 py-2 text-center"
                   >
                     <input
-                      type="radio"
+                      type="checkbox"
                       name={`question-${index}`}
                       value={score}
                       checked={answers[index] == score}
@@ -92,15 +97,16 @@ export default function EmployeeSurvey() {
             ))}
           </tbody>
         </table>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          {loading ? "در حال ارسال..." : "ارسال پرسشنامه"}
-        </button>
-        {error && <p className="text-red-500">{error}</p>}
+        <div className="flex justify-end space-x-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white text-xl px-10 py-2 my-6 rounded hover:bg-blue-700"
+          >
+            {loading ? "در حال ارسال..." : "ارسال پرسشنامه"}
+          </button>
+          {error && <p className="text-red-500">{error}</p>}
+        </div>
       </form>
     </div>
   );
