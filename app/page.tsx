@@ -5,6 +5,14 @@ import HouseholdForm from "./forms/household";
 import StatsCard from "./components/StatsCard";
 import Charts from "./components/Charts";
 import EmployeeSurvey from "./forms/employees";
+import {
+  HomeIcon,
+  ChartBarIcon,
+  DocumentTextIcon,
+  UserGroupIcon,
+  HandThumbUpIcon,
+  ClipboardDocumentIcon,
+} from "@heroicons/react/24/outline";
 
 const Dashboard = () => {
   const [selectedForm, setSelectedForm] = useState("صفحه اصلی");
@@ -37,7 +45,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen">
       <header className="bg-gray-800 text-white p-4">
         <nav className="flex justify-between items-center">
           <h1 className="text-xl font-bold">داشبورد</h1>
@@ -56,7 +64,7 @@ const Dashboard = () => {
           <nav>
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
-                <span>🏠</span>
+                <HomeIcon className="w-5 h-5 text-white" />
                 <button
                   onClick={() => setSelectedForm("صفحه اصلی")}
                   className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
@@ -65,7 +73,7 @@ const Dashboard = () => {
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <span>📊</span>
+                <ChartBarIcon className="w-5 h-5 text-white" />
                 <button
                   onClick={() => setSelectedForm("گزارشات")}
                   className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
@@ -74,7 +82,7 @@ const Dashboard = () => {
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <span>📄</span>
+                <DocumentTextIcon className="w-5 h-5 text-white" />
                 <div className="relative w-full">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -105,21 +113,35 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        <main className="flex-1 p-8">
+        <main className="flex p-8 w-full">
           {selectedForm === "صفحه اصلی" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-              <div className="lg:col-span-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <StatsCard title="تعداد کاربران" value={1200} />
-                <StatsCard title="تعداد فرم‌ها" value={15} />
-                <StatsCard title="میزان رضایت" value={85} />
+            <div className="flex w-full h-3/5 items-stretch">
+              <div className="w-1/4 flex flex-col space-y-4">
+                <StatsCard
+                  title="تعداد کاربران"
+                  value={1200}
+                  icon={<UserGroupIcon className="w-6 h-6 text-blue-600" />}
+                />
+                <StatsCard
+                  title="تعداد فرم‌ها"
+                  value={15}
+                  icon={
+                    <ClipboardDocumentIcon className="w-6 h-6 text-blue-600" />
+                  }
+                />
+                <StatsCard
+                  title="میزان رضایت"
+                  value={85}
+                  icon={<HandThumbUpIcon className="w-6 h-6 text-blue-600" />}
+                />
               </div>
-              <div className="lg:col-span-2">
+              <div className="w-3/4">
                 <Charts />
               </div>
             </div>
           )}
           {selectedForm !== "صفحه اصلی" && (
-            <div>
+            <div className="p-4 bg-white rounded shadow-md w-10/12 mx-auto">
               {forms.find((form) => form.name === selectedForm)?.component || (
                 <p>فرم انتخاب شده یافت نشد.</p>
               )}
@@ -127,7 +149,7 @@ const Dashboard = () => {
           )}
         </main>
       </div>
-    </div>
+    </main>
   );
 };
 
