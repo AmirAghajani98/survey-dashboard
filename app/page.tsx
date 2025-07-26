@@ -2,20 +2,16 @@
 
 import React, { useState } from "react";
 import HouseholdForm from "./forms/household";
-import StatsCard from "./components/StatsCard";
 import Charts from "./components/Charts";
 import EmployeeSurvey from "./forms/employees";
 import {
   HomeIcon,
   ChartBarIcon,
   DocumentTextIcon,
-  UserGroupIcon,
-  HandThumbUpIcon,
-  ClipboardDocumentIcon,
 } from "@heroicons/react/24/outline";
 
 const Dashboard = () => {
-  const [selectedForm, setSelectedForm] = useState("صفحه اصلی");
+  const [selectedForm, setSelectedForm] = useState("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const forms = [
@@ -46,47 +42,47 @@ const Dashboard = () => {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <header className="bg-gray-800 text-white p-4">
+      <header className="bg-[#2d91a5] text-slate-900 p-4">
         <nav className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">داشبورد</h1>
+          <h1 className="text-xl font-bold text-slate-700">داشبورد</h1>
           <div className="flex items-center space-x-4">
-            <button className="hover:underline">خروج</button>
+            <button className="hover:underline text-slate-800">خروج</button>
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm">👤</span>
+              <span className="text-slate-800 text-sm">👤</span>
             </div>
           </div>
         </nav>
       </header>
 
       <div className="flex flex-1">
-        <aside className="w-64 bg-gray-800 text-white p-4">
+        <aside className="w-64 bg-[#4bb8ce] text-slate-950 p-4">
           <h2 className="text-xl font-bold mb-4">منو</h2>
           <nav>
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
-                <HomeIcon className="w-5 h-5 text-white" />
+                <HomeIcon className="w-5 h-5 text-slate-900" />
                 <button
-                  onClick={() => setSelectedForm("صفحه اصلی")}
-                  className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                  onClick={() => setSelectedForm("home")}
+                  className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
                 >
                   صفحه اصلی
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <ChartBarIcon className="w-5 h-5 text-white" />
+                <ChartBarIcon className="w-5 h-5 text-slate-900" />
                 <button
-                  onClick={() => setSelectedForm("گزارشات")}
-                  className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                  onClick={() => setSelectedForm("report")}
+                  className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
                 >
                   گزارشات
                 </button>
               </li>
               <li className="flex items-center space-x-2">
-                <DocumentTextIcon className="w-5 h-5 text-white" />
+                <DocumentTextIcon className="w-5 h-5 text-slate-900" />
                 <div className="relative w-full">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="block py-2 px-4 rounded hover:bg-gray-700 text-left w-full"
+                    className="text-lg block py-2 px-4 rounded hover:bg-[#5894a0] text-slate-900 text-right w-full"
                   >
                     فرم‌ها
                   </button>
@@ -113,34 +109,15 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        <main className="flex p-8 w-full">
-          {selectedForm === "صفحه اصلی" && (
-            <div className="flex w-full h-3/5 items-stretch">
-              <div className="w-1/4 flex flex-col space-y-4">
-                <StatsCard
-                  title="تعداد کاربران"
-                  value={1200}
-                  icon={<UserGroupIcon className="w-6 h-6 text-blue-600" />}
-                />
-                <StatsCard
-                  title="تعداد فرم‌ها"
-                  value={15}
-                  icon={
-                    <ClipboardDocumentIcon className="w-6 h-6 text-blue-600" />
-                  }
-                />
-                <StatsCard
-                  title="میزان رضایت"
-                  value={85}
-                  icon={<HandThumbUpIcon className="w-6 h-6 text-blue-600" />}
-                />
-              </div>
-              <div className="w-3/4">
+        <main className="flex p-8 w-full justify-between">
+          {selectedForm === "home" && (
+            <div className="flex w-full h-1/2 gap-x-4">
+              <div className="w-full">
                 <Charts />
               </div>
             </div>
           )}
-          {selectedForm !== "صفحه اصلی" && (
+          {selectedForm !== "home" && (
             <div className="p-4 bg-white rounded shadow-md w-10/12 mx-auto">
               {forms.find((form) => form.name === selectedForm)?.component || (
                 <p>فرم انتخاب شده یافت نشد.</p>
