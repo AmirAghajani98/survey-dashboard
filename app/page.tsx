@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import HouseholdForm from "./forms/household";
 import Charts from "./components/Charts";
 import EmployeeSurvey from "./forms/employees";
+import SatisfactionSurvey from "./forms/satisfaction";
+
 import {
   HomeIcon,
   ChartBarIcon,
@@ -17,7 +19,7 @@ const Dashboard = () => {
   const forms = [
     { name: "کارکنان", component: <EmployeeSurvey /> },
     { name: "همسایگان تاسیسات", component: <div>فرم همسایگان تاسیسات</div> },
-    { name: "رضایت کارکنان", component: <div>فرم رضایت کارکنان</div> },
+    { name: "رضایت کارکنان", component: <SatisfactionSurvey /> },
     {
       name: "مشترکین جز و مشترکین عمده",
       component: <div>فرم مشترکین جز و مشترکین عمده</div>,

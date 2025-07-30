@@ -89,7 +89,7 @@ export default function EmployeeSurvey() {
                       value={score}
                       checked={answers[index] == score}
                       onChange={() => handleAnswer(index, score)}
-                      className="form-radio"
+                      className="form-radio w-6 h-6 mx-auto"
                     />
                   </td>
                 ))}
