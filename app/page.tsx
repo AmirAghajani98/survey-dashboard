@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import HouseholdForm from "./forms/household";
 import Charts from "./components/Charts";
 import EmployeeSurvey from "./forms/employees";
+import SatisfactionSurvey from "./forms/satisfaction";
+
 import {
   HomeIcon,
   ChartBarIcon,
@@ -17,7 +19,7 @@ const Dashboard = () => {
   const forms = [
     { name: "کارکنان", component: <EmployeeSurvey /> },
     { name: "همسایگان تاسیسات", component: <div>فرم همسایگان تاسیسات</div> },
-    { name: "رضایت کارکنان", component: <div>فرم رضایت کارکنان</div> },
+    { name: "رضایت کارکنان", component: <SatisfactionSurvey /> },
     {
       name: "مشترکین جز و مشترکین عمده",
       component: <div>فرم مشترکین جز و مشترکین عمده</div>,
@@ -59,30 +61,30 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold mb-4 text-blue-950">منو</h2>
           <nav>
             <ul className="space-y-2">
-              <li className="flex items-center space-x-2">
+              <li className="flex items-center space-x-2 hover:bg-blue-400">
                 <HomeIcon className="w-8 h-8 text-slate-700" />
                 <button
                   onClick={() => setSelectedForm("home")}
-                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
+                  className="text-lg block py-2 px-4 rounded text-blue-950 text-right w-full"
                 >
                   صفحه اصلی
                 </button>
               </li>
-              <li className="flex items-center space-x-2">
-                <ChartBarIcon className="w-8 h-8 text-slate-700" />
+              <li className="flex items-center space-x-2 hover:bg-blue-400">
+                <ChartBarIcon className="w-8 h-8 text-slate-700 " />
                 <button
                   onClick={() => setSelectedForm("report")}
-                  className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
+                  className="text-lg block py-2 px-4 rounded text-blue-950 text-right w-full"
                 >
                   گزارشات
                 </button>
               </li>
-              <li className="flex items-center space-x-2">
+              <li className="flex items-center space-x-2 hover:bg-blue-400">
                 <DocumentTextIcon className="w-8 h-8 text-slate-700" />
                 <div className="relative w-full">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="text-lg block py-2 px-4 rounded hover:bg-blue-400 text-blue-950 text-right w-full"
+                    className="text-lg block py-2 px-4 rounded  text-blue-950 text-right w-full"
                   >
                     فرم‌ها
                   </button>
