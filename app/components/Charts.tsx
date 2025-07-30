@@ -96,7 +96,6 @@ const Charts: React.FC = () => {
           <h2 className="text-xl font-bold mb-4 text-blue-700">میزان رضایت </h2>
           <Doughnut data={doughnutData} />
         </div>
-
         <div className="bg-white shadow-md rounded-lg p-4 w-7/12">
           <h2 className="text-xl font-bold mb-4 text-blue-700">نظرسنجی </h2>
           <Line
@@ -133,9 +132,7 @@ const Charts: React.FC = () => {
         </h2>
         <div className="mb-2 flex font-bold text-blue-900 text-lg border-b pb-2">
           <div className="w-3/4 text-right">عنوان فرم</div>
-          <div className="w-1/4 text-center border-l border-blue-300">
-            تعداد نظرسنجی
-          </div>
+          <div className="w-1/4 text-center border-blue-300">تعداد نظرسنجی</div>
         </div>
         <ul className="space-y-2">
           {forms.map((form, idx) => (
@@ -143,10 +140,8 @@ const Charts: React.FC = () => {
               key={idx}
               className="border-b pb-2 last:border-none flex items-center"
             >
-              <div className="w-3/4 text-blue-900 text-right border-l">
-                {form.name}
-              </div>
-              <div className="w-1/4 text-center border-l border-blue-200">
+              <div className="w-3/4 text-blue-900 text-right">{form.name}</div>
+              <div className="w-1/4 text-center border-blue-200">
                 <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-sm font-bold">
                   {surveyCounts[idx]}
                 </span>
