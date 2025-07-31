@@ -11,6 +11,7 @@ import {
   ChartBarIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
+import ParticipantSubscribers from "./forms/ParticipantSubscribers";
 
 const Dashboard = () => {
   const [selectedForm, setSelectedForm] = useState("home");
@@ -21,8 +22,12 @@ const Dashboard = () => {
     { name: "همسایگان تاسیسات", component: <div>فرم همسایگان تاسیسات</div> },
     { name: "رضایت کارکنان", component: <SatisfactionSurvey /> },
     {
-      name: "مشترکین جز و مشترکین عمده",
-      component: <div>فرم مشترکین جز و مشترکین عمده</div>,
+      name: "فرم مشترکین عمده",
+      component: <div>فرم مشترکین عمده</div>,
+    },
+    {
+      name: "مشترکین جز",
+      component: <ParticipantSubscribers />,
     },
     {
       name: "متقاضیان و مراجعین",
