@@ -1,19 +1,14 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
 
-const survey = data.ServiceContractors;
+const survey = data.MainStakeholders;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
 type Answers = Record<string, string | number>;
 
-interface Category {
-  title: string;
-  questions: string[];
-}
-
-export default function ServiceContractorsSurvey() {
+export default function MainStakeholdersSurvey() {
   const categoryEntries = Object.entries(categories).map(
     ([title, questions]) => ({
       title,
@@ -36,10 +31,6 @@ export default function ServiceContractorsSurvey() {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
   };
 
-  const handleTextChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -47,7 +38,7 @@ export default function ServiceContractorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه پیمانکاران خدماتی با موفقیت ارسال شد!");
+      alert("پرسشنامه ذینفعان اصلی با موفقیت ارسال شد!");
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
@@ -60,7 +51,7 @@ export default function ServiceContractorsSurvey() {
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-        پرسشنامه پیمانکاران خدماتی
+        پرسشنامه ذینفعان اصلی
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
@@ -114,7 +105,7 @@ export default function ServiceContractorsSurvey() {
                   <th className="border border-gray-300 px-4 py-2">ردیف</th>
                   <th className="border border-gray-300 px-4 py-2">سوال</th>
                   <th className="border border-gray-300 px-4 py-2" colSpan={5}>
-                    میزان رضایت / پاسخ
+                    میزان رضایت
                   </th>
                 </tr>
                 <tr>
@@ -135,10 +126,6 @@ export default function ServiceContractorsSurvey() {
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-
-                  const isFirstTextQuestion =
-                    category.title === "اطلاع رسانی" && index === 0;
-
                   return (
                     <tr key={questionId}>
                       <td className="border border-gray-300 px-4 py-2 text-center">
@@ -147,40 +134,22 @@ export default function ServiceContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFirstTextQuestion ? (
+                      {[1, 2, 3, 4, 5].map((score) => (
                         <td
-                          colSpan={5}
-                          className="border border-gray-300 px-4 py-2"
+                          key={score}
+                          className="border border-gray-300 px-4 py-2 text-center"
                         >
                           <input
-                            type="text"
+                            type="radio"
                             name={`q${questionId}`}
-                            value={answers[`q${questionId}`] || ""}
-                            onChange={(e) =>
-                              handleTextChange(questionId, e.target.value)
-                            }
-                            className="w-full border border-gray-300 p-2 rounded"
-                            placeholder="پاسخ خود را وارد کنید"
+                            value={score}
+                            checked={answers[`q${questionId}`] === score}
+                            onChange={() => handleAnswer(questionId, score)}
+                            required
+                            className="form-radio w-6 h-6 mx-auto"
                           />
                         </td>
-                      ) : (
-                        [1, 2, 3, 4, 5].map((score) => (
-                          <td
-                            key={score}
-                            className="border border-gray-300 px-4 py-2 text-center"
-                          >
-                            <input
-                              type="radio"
-                              name={`q${questionId}`}
-                              value={score}
-                              checked={answers[`q${questionId}`] === score}
-                              onChange={() => handleAnswer(questionId, score)}
-                              required
-                              className="form-radio w-6 h-6 mx-auto"
-                            />
-                          </td>
-                        ))
-                      )}
+                      ))}
                     </tr>
                   );
                 })}
@@ -191,22 +160,8 @@ export default function ServiceContractorsSurvey() {
 
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
-            انتقادات و پیشنهادات
+            پیشنهادات
           </h2>
-          <div className="mb-4">
-            <label className="block text-base font-medium mb-2">
-              {suggestions.انتقادات}
-            </label>
-            <textarea
-              name="criticisms"
-              value={answers["criticisms"] || ""}
-              onChange={(e) =>
-                setAnswers((prev) => ({ ...prev, criticisms: e.target.value }))
-              }
-              className="form-textarea w-full border border-gray-300 p-2"
-              placeholder="انتقادات خود را وارد کنید"
-            />
-          </div>
           <div className="mb-4">
             <label className="block text-base font-medium mb-2">
               {suggestions.پیشنهادات}

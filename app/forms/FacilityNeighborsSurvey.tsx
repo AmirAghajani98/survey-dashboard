@@ -9,9 +9,9 @@ const importanceLevels = [
   "خیلی زیاد/خیلی خوب",
 ];
 
-export default function MajorSubscribersSurvey() {
-  const questions = questionsData.MajorSubscribers.categories;
-  const demographics = questionsData.MajorSubscribers.demographics;
+export default function FacilityNeighborsSurvey() {
+  const categories = questionsData.FacilityNeighbors.categories;
+  const demographics = questionsData.FacilityNeighbors.demographics;
 
   const [answers, setAnswers] = useState<Record<string, any>>({});
 
@@ -28,10 +28,10 @@ export default function MajorSubscribersSurvey() {
   return (
     <form onSubmit={handleSubmit} className="p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        فرم نظرسنجی مشترکین عمده
+        فرم نظرسنجی همسایگان تأسیسات
       </h1>
       <p className="mb-6 text-center text-lg">
-        مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.
+        همسایه محترم؛ لطفاً با دقت به سوالات زیر پاسخ دهید.
       </p>
 
       <table className="table-auto border-collapse border border-gray-300 w-full mb-8">
@@ -51,7 +51,7 @@ export default function MajorSubscribersSurvey() {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(questions).map(([axis, qs]) =>
+          {Object.entries(categories).map(([axis, qs]) =>
             qs.map((question: string, index: number) => (
               <tr key={`${axis}-${index}`}>
                 <td className="border border-gray-300 px-4 py-2 text-center text-lg">

@@ -11,8 +11,8 @@ import {
   PointElement,
   Filler,
 } from "chart.js";
-import EmployeeSurvey from "../forms/employees";
-import HouseholdForm from "../forms/household";
+import EmployeeSurvey from "../forms/EmployeeSurvey";
+import HouseholdForm from "../forms/HouseholdSurvey";
 import {
   UserGroupIcon,
   ClipboardDocumentIcon,

@@ -1,19 +1,14 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
 
-const survey = data.ServiceContractors;
+const survey = data.ApplicantsVisitors;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
 type Answers = Record<string, string | number>;
 
-interface Category {
-  title: string;
-  questions: string[];
-}
-
-export default function ServiceContractorsSurvey() {
+export default function ApplicantsVisitorsSurvey() {
   const categoryEntries = Object.entries(categories).map(
     ([title, questions]) => ({
       title,
@@ -32,11 +27,7 @@ export default function ServiceContractorsSurvey() {
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAnswer = (questionId: string, value: number) => {
-    setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
-  };
-
-  const handleTextChange = (questionId: string, value: string) => {
+  const handleAnswer = (questionId: string, value: number | string) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
   };
 
@@ -47,7 +38,7 @@ export default function ServiceContractorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه پیمانکاران خدماتی با موفقیت ارسال شد!");
+      alert("پرسشنامه مراجعان/متقاضیان با موفقیت ارسال شد!");
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
@@ -60,7 +51,7 @@ export default function ServiceContractorsSurvey() {
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-        پرسشنامه پیمانکاران خدماتی
+        پرسشنامه مراجعان / متقاضیان
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
@@ -135,9 +126,10 @@ export default function ServiceContractorsSurvey() {
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-
-                  const isFirstTextQuestion =
-                    category.title === "اطلاع رسانی" && index === 0;
+                  const isFreeText =
+                    category.title === "علت مراجعه" ||
+                    (category.title === "اطلاع رسانی" && index === 0) ||
+                    category.title === "عملکرد";
 
                   return (
                     <tr key={questionId}>
@@ -147,7 +139,7 @@ export default function ServiceContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFirstTextQuestion ? (
+                      {isFreeText ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
@@ -157,7 +149,7 @@ export default function ServiceContractorsSurvey() {
                             name={`q${questionId}`}
                             value={answers[`q${questionId}`] || ""}
                             onChange={(e) =>
-                              handleTextChange(questionId, e.target.value)
+                              handleAnswer(questionId, e.target.value)
                             }
                             className="w-full border border-gray-300 p-2 rounded"
                             placeholder="پاسخ خود را وارد کنید"

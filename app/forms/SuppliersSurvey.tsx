@@ -1,7 +1,7 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
 
-const survey = data.ServiceContractors;
+const survey = data.Suppliers;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
@@ -13,7 +13,7 @@ interface Category {
   questions: string[];
 }
 
-export default function ServiceContractorsSurvey() {
+export default function SuppliersSurvey() {
   const categoryEntries = Object.entries(categories).map(
     ([title, questions]) => ({
       title,
@@ -47,7 +47,7 @@ export default function ServiceContractorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه پیمانکاران خدماتی با موفقیت ارسال شد!");
+      alert("پرسشنامه تأمین‌کنندگان با موفقیت ارسال شد!");
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
@@ -60,7 +60,7 @@ export default function ServiceContractorsSurvey() {
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-        پرسشنامه پیمانکاران خدماتی
+        پرسشنامه تأمین‌کنندگان / پیمانکاران
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
@@ -136,7 +136,7 @@ export default function ServiceContractorsSurvey() {
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
 
-                  const isFirstTextQuestion =
+                  const isTextQuestion =
                     category.title === "اطلاع رسانی" && index === 0;
 
                   return (
@@ -147,7 +147,7 @@ export default function ServiceContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFirstTextQuestion ? (
+                      {isTextQuestion ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
 
-const demographics = data.demographics;
-const categories = data.satisfaction_categories;
-const additionalQuestions = data.satisfaction_additional || [];
-const participationQuestions = data.satisfaction_participation || [];
-const suggestionQuestions = data.satisfaction_suggestions || [];
+const survey = data.EmployeeSatisfaction;
+const demographics = survey.demographics;
+const categories = survey.categories;
+const additionalQuestions = survey.additional || [];
+const participationQuestions = survey.participation || [];
+const suggestionQuestions = survey.suggestions || [];
 
 type Answers = Record<string, string | number>;
 
@@ -14,18 +15,21 @@ interface Category {
   questions: string[];
 }
 
-export default function SatisfactionSurvey() {
+export default function EmployeeSatisfactionSurvey() {
   const categoryEntries = Object.entries(categories).map(
     ([title, questions]) => ({
       title,
       questions: questions as string[],
     })
   );
+
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDemoChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
     const { name, value } = e.target;
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
@@ -40,7 +44,8 @@ export default function SatisfactionSurvey() {
     setError("");
 
     try {
-      console.log(answers);
+      console.log("Answers:", answers);
+      alert("پرسشنامه با موفقیت ارسال شد!");
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
@@ -65,24 +70,37 @@ export default function SatisfactionSurvey() {
               <label htmlFor={key} className="text-lg font-semibold">
                 {label}
               </label>
-              <select
-                id={key}
-                name={key}
-                onChange={handleDemoChange}
-                value={answers[key] || ""}
-                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                required
-              >
-                <option value="">لطفا انتخاب کنید</option>
-                {options.split(",").map((option) => (
-                  <option key={option} value={option} className="text-base">
-                    {option}
-                  </option>
-                ))}
-              </select>
+              {options ? (
+                <select
+                  id={key}
+                  name={key}
+                  onChange={handleDemoChange}
+                  value={answers[key] || ""}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  required
+                >
+                  <option value="">لطفا انتخاب کنید</option>
+                  {options.split(",").map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  id={key}
+                  name={key}
+                  type="text"
+                  value={answers[key] || ""}
+                  onChange={handleDemoChange}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  required
+                />
+              )}
             </div>
           ))}
         </div>
+
         {categoryEntries.map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
@@ -102,21 +120,14 @@ export default function SatisfactionSurvey() {
                     className="border border-gray-300 px-4 py-2"
                     colSpan={2}
                   ></th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    ۱{" "}
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    ۲
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    ۳{" "}
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    ۴{" "}
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    ۵{" "}
-                  </th>
+                  {[1, 2, 3, 4, 5].map((score) => (
+                    <th
+                      key={score}
+                      className="border border-gray-300 px-4 py-2 text-center"
+                    >
+                      {score}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -136,7 +147,7 @@ export default function SatisfactionSurvey() {
                           className="border border-gray-300 px-4 py-2 text-center"
                         >
                           <input
-                            type="checkbox"
+                            type="radio"
                             name={`q${questionId}`}
                             value={score}
                             checked={answers[`q${questionId}`] === score}
@@ -153,48 +164,33 @@ export default function SatisfactionSurvey() {
             </table>
           </div>
         ))}
+
         {additionalQuestions.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
               سوالات اضافی
             </h2>
-            <table className="border-collapse border border-gray-300 w-full mb-4">
-              <thead>
-                <tr>
-                  <th className="border border-gray-300 px-4 py-2">ردیف</th>
-                  <th className="border border-gray-300 px-4 py-2">سوال</th>
-                  <th className="border border-gray-300 px-4 py-2">پاسخ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {additionalQuestions.map((question, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2 text-center">
-                      {index + 1}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-3 text-base font-medium">
-                      {question}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">
-                      <input
-                        type="text"
-                        name={`additional-${index}`}
-                        value={answers[`additional-${index}`] || ""}
-                        onChange={(e) =>
-                          setAnswers((prev) => ({
-                            ...prev,
-                            [`additional-${index}`]: e.target.value,
-                          }))
-                        }
-                        className="form-input"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {additionalQuestions.map((question, index) => (
+              <div key={index} className="mb-4">
+                <label className="block text-base font-medium mb-2">
+                  {question}
+                </label>
+                <textarea
+                  name={`additional-${index}`}
+                  value={answers[`additional-${index}`] || ""}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [`additional-${index}`]: e.target.value,
+                    }))
+                  }
+                  className="form-textarea w-full border border-gray-300 p-2"
+                />
+              </div>
+            ))}
           </div>
         )}
+
         {participationQuestions.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
@@ -207,7 +203,7 @@ export default function SatisfactionSurvey() {
                   {item.options.map((option, optIndex) => (
                     <label key={optIndex} className="flex items-center gap-2">
                       <input
-                        type="checkbox"
+                        type="radio"
                         name={`participation-${index}`}
                         value={option}
                         checked={answers[`participation-${index}`] === option}
@@ -224,7 +220,7 @@ export default function SatisfactionSurvey() {
                   ))}
                 </div>
                 {item.followup &&
-                  answers[`participation-${index}`] === "مشارکت نداشته ام" && (
+                  answers[`participation-${index}`] === "مشاركت نداشته ام" && (
                     <textarea
                       name={`followup-${index}`}
                       value={answers[`followup-${index}`] || ""}
@@ -235,13 +231,14 @@ export default function SatisfactionSurvey() {
                         }))
                       }
                       className="form-textarea mt-2 w-full border border-gray-300 p-2"
-                      placeholder="لطفاً توضیحات خود را وارد کنید"
+                      placeholder={item.followup}
                     />
                   )}
               </div>
             ))}
           </div>
         )}
+
         {suggestionQuestions.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
@@ -268,6 +265,7 @@ export default function SatisfactionSurvey() {
             ))}
           </div>
         )}
+
         <div className="flex justify-end space-x-4">
           <button
             type="submit"
