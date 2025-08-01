@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -20,6 +20,16 @@ import {
   HandThumbDownIcon,
 } from "@heroicons/react/24/outline";
 import StatsCard from "./StatsCard";
+import FacilityNeighborsSurvey from "../forms/FacilityNeighborsSurvey";
+import EmployeeSatisfactionSurvey from "../forms/EmployeeSatisfactionSurvey";
+import MajorSubscribersSurvey from "../forms/MajorSubscribers";
+import MinorSubscribers from "../forms/MinorSubscribers";
+import ApplicantsVisitorsSurvey from "../forms/ApplicantsVisitorsSurvey";
+import CommunityRepresentativesSurvey from "../forms/CommunityRepresentativesSurvey";
+import ServiceContractorsSurvey from "../forms/ServiceContractors";
+import SuppliersSurvey from "../forms/SuppliersSurvey";
+import MainStakeholdersSurvey from "../forms/MainStakeholdersSurvey";
+import ExecutiveContractorsSurvey from "../forms/ExecutiveContractors";
 
 ChartJS.register(
   ArcElement,
@@ -57,38 +67,48 @@ const doughnutData = {
 
 const forms = [
   { name: "کارکنان", component: <EmployeeSurvey /> },
-  { name: "همسایگان تاسیسات", component: <div>فرم همسایگان تاسیسات</div> },
-  { name: "رضایت کارکنان", component: <div>فرم رضایت کارکنان</div> },
+  { name: "همسایگان تاسیسات", component: <FacilityNeighborsSurvey /> },
+  { name: "رضایت کارکنان", component: <EmployeeSatisfactionSurvey /> },
   {
-    name: "مشترکین جز و مشترکین عمده",
-    component: <div>فرم مشترکین جز و مشترکین عمده</div>,
+    name: "مشترکین عمده",
+    component: <MajorSubscribersSurvey />,
   },
-  { name: "متقاضیان و مراجعین", component: <div>فرم متقاضیان و مراجعین</div> },
-  { name: "نمایندگان جامعه", component: <div>فرم نمایندگان جامعه</div> },
-  { name: "پیمان کاران اجرایی", component: <div>فرم پیمان کاران اجرایی</div> },
-  { name: "پیمانکاران خدماتی", component: <div>فرم پیمانکاران خدماتی</div> },
-  { name: "تامین کنندگان کالا", component: <div>فرم تامین کنندگان کالا</div> },
-  { name: "ذینفعان اصلی شرکت", component: <div>فرم ذینفعان اصلی شرکت</div> },
+  {
+    name: "مشترکین جز ",
+    component: <MinorSubscribers />,
+  },
+  { name: "متقاضیان و مراجعین", component: <ApplicantsVisitorsSurvey /> },
+  { name: "نمایندگان جامعه", component: <CommunityRepresentativesSurvey /> },
+  { name: "پیمان کاران اجرایی", component: <ExecutiveContractorsSurvey /> },
+  { name: "پیمانکاران خدماتی", component: <ServiceContractorsSurvey /> },
+  { name: "تامین کنندگان کالا", component: <SuppliersSurvey /> },
+  { name: "ذینفعان اصلی شرکت", component: <MainStakeholdersSurvey /> },
   { name: "مشترکین خانگی", component: <HouseholdForm /> },
 ];
 
-const areaData = {
-  labels: forms.map((form) => form.name),
-  datasets: [
-    {
-      label: "تعداد",
-      data: forms.map(() => Math.floor(Math.random() * 200) + 50),
-      backgroundColor: bluePalette.area,
-      borderColor: bluePalette.main,
-      fill: true,
-      tension: 0.3,
-    },
-  ],
-};
-
-const surveyCounts = areaData.datasets[0].data;
-
 const Charts: React.FC = () => {
+  const [surveyCounts, setSurveyCounts] = useState<number[]>([]);
+
+  useEffect(() => {
+    const counts = forms.map(() => Math.floor(Math.random() * 200) + 50);
+    setSurveyCounts(counts);
+  }, []);
+
+  const areaData = {
+    labels: forms.map((form) => form.name),
+    datasets: [
+      {
+        label: "تعداد",
+        data:
+          surveyCounts.length > 0 ? surveyCounts : Array(forms.length).fill(0),
+        backgroundColor: bluePalette.area,
+        borderColor: bluePalette.main,
+        fill: true,
+        tension: 0.3,
+      },
+    ],
+  };
+
   return (
     <>
       <div className="flex gap-4 w-full">
@@ -143,7 +163,7 @@ const Charts: React.FC = () => {
               <div className="w-3/4 text-blue-900 text-right">{form.name}</div>
               <div className="w-1/4 text-center border-blue-200">
                 <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-sm font-bold">
-                  {surveyCounts[idx]}
+                  {surveyCounts[idx] ?? 0}
                 </span>
               </div>
             </li>
