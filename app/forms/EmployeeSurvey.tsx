@@ -1,20 +1,48 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
 
-const demographics = data.demographics;
-const questions: string[] = data["employees "] || data;
+const demographics = data.EmployeesHSE.demographics;
+const questions: string[] = data.EmployeesHSE.questions;
 
 type Answers = Record<number, string | number>;
+type DemographicAnswers = Record<string, string>;
 
 export default function EmployeeSurvey() {
   const [answers, setAnswers] = useState<Answers>({});
+  const [demoAnswers, setDemoAnswers] = useState<DemographicAnswers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {};
+  const handleDemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setDemoAnswers({ ...demoAnswers, [name]: value });
+  };
 
   const handleAnswer = (idx: number, value: string | number) => {
     setAnswers({ ...answers, [idx]: value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (Object.keys(answers).length < questions.length) {
+      setError("لطفاً به همه‌ی سوالات پاسخ دهید");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const payload = {
+      demographics: demoAnswers,
+      answers,
+    };
+
+    setTimeout(() => {
+      console.log("پاسخ‌ها:", payload);
+      setLoading(false);
+      alert("پرسشنامه با موفقیت ارسال شد!");
+    }, 1000);
   };
 
   return (
@@ -22,7 +50,7 @@ export default function EmployeeSurvey() {
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
         پرسشنامه HSE کارکنان
       </h1>
-      <form onSubmit={() => {}} className="space-y-6 w-full m-auto">
+      <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
             <div
@@ -35,14 +63,17 @@ export default function EmployeeSurvey() {
               <select
                 id={key}
                 name={key}
+                value={demoAnswers[key] || ""}
                 onChange={handleDemoChange}
                 className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
               >
-                {options.split(",").map((option) => (
-                  <option key={option} value={option} className="text-base">
-                    {option}
-                  </option>
-                ))}
+                <option value="">انتخاب کنید</option>
+                {options &&
+                  options.split(",").map((option) => (
+                    <option key={option} value={option} className="text-base">
+                      {option}
+                    </option>
+                  ))}
               </select>
             </div>
           ))}
@@ -84,10 +115,10 @@ export default function EmployeeSurvey() {
                     className="border border-gray-300 px-4 py-2 text-center"
                   >
                     <input
-                      type="checkbox"
+                      type="radio"
                       name={`question-${index}`}
                       value={score}
-                      checked={answers[index] == score}
+                      checked={answers[index] === score}
                       onChange={() => handleAnswer(index, score)}
                       className="form-radio w-6 h-6 mx-auto"
                     />
@@ -97,6 +128,7 @@ export default function EmployeeSurvey() {
             ))}
           </tbody>
         </table>
+
         <div className="flex justify-end space-x-4">
           <button
             type="submit"

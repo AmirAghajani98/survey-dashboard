@@ -1,16 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
-import HouseholdForm from "./forms/household";
+import HouseholdSurvey from "./forms/HouseholdSurvey";
 import Charts from "./components/Charts";
-import EmployeeSurvey from "./forms/employees";
-import SatisfactionSurvey from "./forms/satisfaction";
+import EmployeeSurvey from "./forms/EmployeeSurvey";
+import SatisfactionSurvey from "./forms/EmployeeSatisfactionSurvey";
+import MinorSubscribers from "./forms/MinorSubscribers";
 
 import {
   HomeIcon,
   ChartBarIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
+import FacilityNeighborsSurvey from "./forms/FacilityNeighborsSurvey";
+import MajorSubscribersSurvey from "./forms/MajorSubscribers";
+import CommunityRepresentativesSurvey from "./forms/CommunityRepresentativesSurvey";
+import ApplicantsVisitorsSurvey from "./forms/ApplicantsVisitorsSurvey";
+import ExecutiveContractorsSurvey from "./forms/ExecutiveContractors";
+import ServiceContractorsSurvey from "./forms/ServiceContractors";
+import MainStakeholdersSurvey from "./forms/MainStakeholdersSurvey";
+import SuppliersSurvey from "./forms/SuppliersSurvey";
 
 const Dashboard = () => {
   const [selectedForm, setSelectedForm] = useState("home");
@@ -18,28 +27,32 @@ const Dashboard = () => {
 
   const forms = [
     { name: "کارکنان", component: <EmployeeSurvey /> },
-    { name: "همسایگان تاسیسات", component: <div>فرم همسایگان تاسیسات</div> },
+    { name: "همسایگان تاسیسات", component: <FacilityNeighborsSurvey /> },
     { name: "رضایت کارکنان", component: <SatisfactionSurvey /> },
     {
-      name: "مشترکین جز و مشترکین عمده",
-      component: <div>فرم مشترکین جز و مشترکین عمده</div>,
+      name: "فرم مشترکین عمده",
+      component: <MajorSubscribersSurvey />,
+    },
+    {
+      name: "مشترکین جز",
+      component: <MinorSubscribers />,
     },
     {
       name: "متقاضیان و مراجعین",
-      component: <div>فرم متقاضیان و مراجعین</div>,
+      component: <ApplicantsVisitorsSurvey />,
     },
-    { name: "نمایندگان جامعه", component: <div>فرم نمایندگان جامعه</div> },
+    { name: "نمایندگان جامعه", component: <CommunityRepresentativesSurvey /> },
     {
       name: "پیمان کاران اجرایی",
-      component: <div>فرم پیمان کاران اجرایی</div>,
+      component: <ExecutiveContractorsSurvey />,
     },
-    { name: "پیمانکاران خدماتی", component: <div>فرم پیمانکاران خدماتی</div> },
+    { name: "پیمانکاران خدماتی", component: <ServiceContractorsSurvey /> },
     {
       name: "تامین کنندگان کالا",
-      component: <div>فرم تامین کنندگان کالا</div>,
+      component: <SuppliersSurvey />,
     },
-    { name: "ذینفعان اصلی شرکت", component: <div>فرم ذینفعان اصلی شرکت</div> },
-    { name: "مشترکین خانگی", component: <HouseholdForm /> },
+    { name: "ذینفعان اصلی شرکت", component: <MainStakeholdersSurvey /> },
+    { name: "مشترکین خانگی", component: <HouseholdSurvey /> },
   ];
 
   return (
