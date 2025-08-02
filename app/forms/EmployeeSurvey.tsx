@@ -13,8 +13,7 @@ export default function EmployeeSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleDemoChange = (name: string, value: string) => {
     setDemoAnswers({ ...demoAnswers, [name]: value });
   };
 
@@ -57,24 +56,50 @@ export default function EmployeeSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-              <select
-                id={key}
-                name={key}
-                value={demoAnswers[key] || ""}
-                onChange={handleDemoChange}
-                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-              >
-                <option value="">انتخاب کنید</option>
-                {options &&
-                  options.split(",").map((option) => (
-                    <option key={option} value={option} className="text-base">
+              {/* فقط محل کار متن باشد */}
+              {label === "محل کار" ? (
+                <input
+                  type="text"
+                  name={key}
+                  value={demoAnswers[key] || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  placeholder="محل کار خود را وارد کنید"
+                  required
+                />
+              ) : options ? (
+                <div className="flex flex-wrap gap-3">
+                  {options.split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={demoAnswers[key] === option}
+                        onChange={(e) => handleDemoChange(key, e.target.value)}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-              </select>
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  name={key}
+                  value={demoAnswers[key] || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  required
+                />
+              )}
             </div>
           ))}
         </div>
@@ -89,12 +114,9 @@ export default function EmployeeSurvey() {
               </th>
             </tr>
             <tr>
-              <th className="border border-gray-300 px-4 py-2" colSpan={2}></th>
+              <th colSpan={2}></th>
               {[1, 2, 3, 4, 5].map((score) => (
-                <th
-                  key={score}
-                  className="border border-gray-300 px-4 py-2 text-center"
-                >
+                <th key={score} className="border border-gray-300 px-4 py-2">
                   {score}
                 </th>
               ))}

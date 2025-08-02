@@ -58,38 +58,21 @@ export default function MainStakeholdersSurvey() {
           {demographics.map(([key, label, options]) => (
             <div
               key={key}
-              className="shadow-sm p-4 rounded-md border border-gray-200"
+              className="shadow-sm p-4 rounded-md border border-gray-200 w-full"
             >
               <label htmlFor={key} className="text-lg font-semibold">
                 {label}
               </label>
-              {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
-                  {options.split(",").map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id={key}
-                  name={key}
-                  type="text"
-                  value={answers[key] || ""}
-                  onChange={handleDemoChange}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                />
-              )}
+
+              <input
+                id={key}
+                name={key}
+                type="text"
+                value={answers[key] || ""}
+                onChange={handleDemoChange}
+                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                required
+              />
             </div>
           ))}
         </div>

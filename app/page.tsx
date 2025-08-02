@@ -102,9 +102,9 @@ const Dashboard = () => {
                     فرم‌ها
                   </button>
                   {isDropdownOpen && (
-                    <ul className="absolute left-0 mt-2 bg-blue-800 rounded shadow-lg w-full">
+                    <ul className="absolute left-0 mt-2 bg-blue-100 rounded shadow-lg w-full">
                       {forms.map((form, index) => (
-                        <li key={index} className="py-2 px-4 hover:bg-blue-900">
+                        <li key={index} className="py-2 px-4 hover:bg-blue-300">
                           <button
                             onClick={() => {
                               setSelectedForm(form.name);
@@ -124,7 +124,7 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        <main className="flex p-8 w-full justify-between">
+        <main className="flex p-2 w-full justify-between">
           {selectedForm === "home" && (
             <div className="flex w-full h-1/2 gap-x-4">
               <div className="w-full">

@@ -6,12 +6,7 @@ const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
-type Answers = Record<string, string | number>;
-
-interface Category {
-  title: string;
-  questions: string[];
-}
+type Answers = Record<string, string | number | string[]>;
 
 export default function ExecutiveContractorsSurvey() {
   const categoryEntries = Object.entries(categories).map(
@@ -25,11 +20,8 @@ export default function ExecutiveContractorsSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    setAnswers((prev) => ({ ...prev, [name]: value }));
+  const handleDemoChange = (key: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleAnswer = (questionId: string, value: number) => {
@@ -38,6 +30,23 @@ export default function ExecutiveContractorsSurvey() {
 
   const handleTextChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
+  };
+
+  const handleCheckboxChange = (questionId: string, value: string) => {
+    setAnswers((prev) => {
+      const currentValues = (prev[`q${questionId}`] as string[]) || [];
+      if (currentValues.includes(value)) {
+        return {
+          ...prev,
+          [`q${questionId}`]: currentValues.filter((v) => v !== value),
+        };
+      } else {
+        return {
+          ...prev,
+          [`q${questionId}`]: [...currentValues, value],
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,32 +78,35 @@ export default function ExecutiveContractorsSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
               {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
+                <div className="flex flex-wrap gap-3">
                   {options.split(",").map((option) => (
-                    <option key={option} value={option}>
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={answers[key] === option}
+                        onChange={(e) => handleDemoChange(key, e.target.value)}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-                </select>
+                </div>
               ) : (
                 <input
-                  id={key}
-                  name={key}
                   type="text"
-                  value={answers[key] || ""}
-                  onChange={handleDemoChange}
+                  name={key}
+                  value={(answers[key] as string) || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
                 />
@@ -117,26 +129,11 @@ export default function ExecutiveContractorsSurvey() {
                     میزان رضایت / پاسخ
                   </th>
                 </tr>
-                <tr>
-                  <th
-                    className="border border-gray-300 px-4 py-2"
-                    colSpan={2}
-                  ></th>
-                  {[1, 2, 3, 4, 5].map((score) => (
-                    <th
-                      key={score}
-                      className="border border-gray-300 px-4 py-2 text-center"
-                    >
-                      {score}
-                    </th>
-                  ))}
-                </tr>
               </thead>
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-
-                  const isTextQuestion =
+                  const isFirstInformQuestion =
                     category.title === "اطلاع رسانی" && index === 0;
 
                   return (
@@ -147,21 +144,39 @@ export default function ExecutiveContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isTextQuestion ? (
+                      {isFirstInformQuestion ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
                         >
-                          <input
-                            type="text"
-                            name={`q${questionId}`}
-                            value={answers[`q${questionId}`] || ""}
-                            onChange={(e) =>
-                              handleTextChange(questionId, e.target.value)
-                            }
-                            className="w-full border border-gray-300 p-2 rounded"
-                            placeholder="پاسخ خود را وارد کنید"
-                          />
+                          <div className="flex flex-wrap gap-4">
+                            {[
+                              "پايگاه اطلاع رساني مناقصات",
+                              "شانا",
+                              "برد شركت گاز",
+                              "از طريق سايت شركت",
+                            ].map((option) => (
+                              <label
+                                key={option}
+                                className="flex items-center gap-2 cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  name={`q${questionId}`}
+                                  value={option}
+                                  checked={(
+                                    (answers[`q${questionId}`] as string[]) ||
+                                    []
+                                  ).includes(option)}
+                                  onChange={() =>
+                                    handleCheckboxChange(questionId, option)
+                                  }
+                                  className="w-5 h-5"
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
                         </td>
                       ) : (
                         [1, 2, 3, 4, 5].map((score) => (
@@ -199,7 +214,7 @@ export default function ExecutiveContractorsSurvey() {
             </label>
             <textarea
               name="criticisms"
-              value={answers["criticisms"] || ""}
+              value={(answers["criticisms"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, criticisms: e.target.value }))
               }
@@ -213,7 +228,7 @@ export default function ExecutiveContractorsSurvey() {
             </label>
             <textarea
               name="suggestions"
-              value={answers["suggestions"] || ""}
+              value={(answers["suggestions"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, suggestions: e.target.value }))
               }

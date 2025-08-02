@@ -27,9 +27,7 @@ export default function EmployeeSatisfactionSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+  const handleDemoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
@@ -67,32 +65,38 @@ export default function EmployeeSatisfactionSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label className="text-lg font-semibold mb-2 block">
                 {label}
               </label>
               {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
-                  {options.split(",").map((option) => (
-                    <option key={option} value={option}>
+                <div className="flex flex-wrap gap-3">
+                  {(options as string).split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={answers[key] === option}
+                        onChange={handleDemoChange}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-                </select>
+                </div>
               ) : (
                 <input
                   id={key}
                   name={key}
                   type="text"
                   value={answers[key] || ""}
-                  onChange={handleDemoChange}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({ ...prev, [key]: e.target.value }))
+                  }
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
                 />
@@ -116,14 +120,11 @@ export default function EmployeeSatisfactionSurvey() {
                   </th>
                 </tr>
                 <tr>
-                  <th
-                    className="border border-gray-300 px-4 py-2"
-                    colSpan={2}
-                  ></th>
+                  <th colSpan={2}></th>
                   {[1, 2, 3, 4, 5].map((score) => (
                     <th
                       key={score}
-                      className="border border-gray-300 px-4 py-2 text-center"
+                      className="border border-gray-300 px-4 py-2"
                     >
                       {score}
                     </th>
@@ -138,7 +139,7 @@ export default function EmployeeSatisfactionSurvey() {
                       <td className="border border-gray-300 px-4 py-2 text-center">
                         {index + 1}
                       </td>
-                      <td className="border border-gray-300 px-4 py-3 text-base font-medium">
+                      <td className="border border-gray-300 px-4 py-3">
                         {question}
                       </td>
                       {[1, 2, 3, 4, 5].map((score) => (
@@ -152,8 +153,8 @@ export default function EmployeeSatisfactionSurvey() {
                             value={score}
                             checked={answers[`q${questionId}`] === score}
                             onChange={() => handleAnswer(questionId, score)}
-                            required
                             className="form-radio w-6 h-6 mx-auto"
+                            required
                           />
                         </td>
                       ))}
@@ -172,9 +173,7 @@ export default function EmployeeSatisfactionSurvey() {
             </h2>
             {additionalQuestions.map((question, index) => (
               <div key={index} className="mb-4">
-                <label className="block text-base font-medium mb-2">
-                  {question}
-                </label>
+                <label className="block mb-2">{question}</label>
                 <textarea
                   name={`additional-${index}`}
                   value={answers[`additional-${index}`] || ""}
@@ -184,7 +183,7 @@ export default function EmployeeSatisfactionSurvey() {
                       [`additional-${index}`]: e.target.value,
                     }))
                   }
-                  className="form-textarea w-full border border-gray-300 p-2"
+                  className="w-full border border-gray-300 p-2"
                 />
               </div>
             ))}
@@ -198,7 +197,7 @@ export default function EmployeeSatisfactionSurvey() {
             </h2>
             {participationQuestions.map((item, index) => (
               <div key={index} className="mb-6">
-                <p className="text-base font-medium mb-2">{item.question}</p>
+                <p className="mb-2">{item.question}</p>
                 <div className="flex flex-wrap gap-4">
                   {item.options.map((option, optIndex) => (
                     <label key={optIndex} className="flex items-center gap-2">
@@ -213,7 +212,7 @@ export default function EmployeeSatisfactionSurvey() {
                             [`participation-${index}`]: option,
                           }))
                         }
-                        className="form-radio w-6 h-6 mx-auto"
+                        className="w-5 h-5"
                       />
                       {option}
                     </label>
@@ -230,7 +229,7 @@ export default function EmployeeSatisfactionSurvey() {
                           [`followup-${index}`]: e.target.value,
                         }))
                       }
-                      className="form-textarea mt-2 w-full border border-gray-300 p-2"
+                      className="w-full border border-gray-300 p-2 mt-2"
                       placeholder={item.followup}
                     />
                   )}
@@ -246,9 +245,7 @@ export default function EmployeeSatisfactionSurvey() {
             </h2>
             {suggestionQuestions.map((question, index) => (
               <div key={index} className="mb-4">
-                <label className="block text-base font-medium mb-2">
-                  {question}
-                </label>
+                <label className="block mb-2">{question}</label>
                 <textarea
                   name={`suggestion-${index}`}
                   value={answers[`suggestion-${index}`] || ""}
@@ -258,7 +255,7 @@ export default function EmployeeSatisfactionSurvey() {
                       [`suggestion-${index}`]: e.target.value,
                     }))
                   }
-                  className="form-textarea w-full border border-gray-300 p-2"
+                  className="w-full border border-gray-300 p-2"
                   placeholder="لطفاً توضیحات خود را وارد کنید"
                 />
               </div>
