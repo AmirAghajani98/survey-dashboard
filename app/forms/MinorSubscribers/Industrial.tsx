@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import questionsData from "../../data/questions.json";
-import { useToast } from "../components/ToastContext";
+import questionsData from "../../../data/questions.json";
 
 const importanceLevels = [
   "خیلی کم/خیلی ضعیف",
@@ -10,50 +9,30 @@ const importanceLevels = [
   "خیلی زیاد/خیلی خوب",
 ];
 
-export default function FacilityNeighborsSurvey() {
-  const categories = questionsData.FacilityNeighbors.categories;
-  const demographics = questionsData.FacilityNeighbors.demographics;
-
-  const { showToast } = useToast();
+export default function MinorIndustrial() {
+  const categories = questionsData.MajorSubscribers.categories;
+  const demographics = questionsData.MajorSubscribers.demographics;
 
   const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>("");
 
   const handleChange = (name: string, value: any) => {
-    setAnswers((prev) => ({ ...prev, [name]: value }));
+    setAnswers({ ...answers, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      console.log("Answers:", answers);
-
-      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
-
-      setAnswers({});
-      (e.target as HTMLFormElement).reset();
-    } catch (err) {
-      console.error(err);
-      setError("خطا در ارسال اطلاعات");
-      showToast("خطا در ارسال اطلاعات!", "error");
-    } finally {
-      setLoading(false);
-    }
+    console.log("پاسخ‌ها:", answers);
+    alert("پرسشنامه ارسال شد!");
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        فرم نظرسنجی همسایگان تأسیسات
+        فرم نظرسنجی مشترکین عمده (صنعتی)
       </h1>
       <p className="mb-6 text-center text-lg">
-        همسایه محترم؛ لطفاً با دقت به سوالات زیر پاسخ دهید.
+        مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.
       </p>
-
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
           اطلاعات دموگرافیک:
@@ -67,17 +46,7 @@ export default function FacilityNeighborsSurvey() {
               <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-              {label.includes("فاصله منزل مسكوني") ? (
-                <input
-                  type="text"
-                  name={key}
-                  value={answers[key] || ""}
-                  onChange={(e) => handleChange(key, e.target.value)}
-                  placeholder="مثلاً 200 متر"
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                />
-              ) : options ? (
+              {options ? (
                 <div className="flex flex-wrap gap-3">
                   {options.split(",").map((option) => (
                     <label
@@ -101,7 +70,6 @@ export default function FacilityNeighborsSurvey() {
                 <input
                   type="text"
                   name={key}
-                  value={answers[key] || ""}
                   onChange={(e) => handleChange(key, e.target.value)}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
@@ -111,13 +79,12 @@ export default function FacilityNeighborsSurvey() {
           ))}
         </div>
       </div>
-
       {Object.entries(categories).map(([category, questions], catIndex) => (
         <div key={catIndex} className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
             {category}
           </h2>
-          <table className="border-collapse border border-gray-300 w-full mb-4">
+          <table className="table-auto border-collapse border border-gray-300 w-full mb-8">
             <thead>
               <tr>
                 <th className="border border-gray-300 px-4 py-2">ردیف</th>
@@ -150,10 +117,6 @@ export default function FacilityNeighborsSurvey() {
                         type="radio"
                         name={`question-${category}-${index}`}
                         value={idx + 1}
-                        checked={
-                          answers[`question-${category}-${index}`] ===
-                          String(idx + 1)
-                        }
                         onChange={(e) =>
                           handleChange(
                             `question-${category}-${index}`,
@@ -161,7 +124,6 @@ export default function FacilityNeighborsSurvey() {
                           )
                         }
                         className="form-radio w-5 h-5 mx-auto"
-                        required
                       />
                     </td>
                   ))}
@@ -173,13 +135,12 @@ export default function FacilityNeighborsSurvey() {
       ))}
 
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-blue-900 pb-2">
+        <h2 className="font-bold text-lg mb-2">
           انتقاد یا پیشنهاد نسبت به عملکرد شرکت گاز:
         </h2>
         <textarea
           className="border rounded w-full p-2 mb-2"
           placeholder="انتقادات و پیشنهادات خود را بنویسید..."
-          value={answers["suggestions"] || ""}
           onChange={(e) => handleChange("suggestions", e.target.value)}
         />
       </div>
@@ -187,12 +148,10 @@ export default function FacilityNeighborsSurvey() {
       <div className="flex justify-end mt-8">
         <button
           type="submit"
-          disabled={loading}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow"
         >
-          {loading ? "در حال ارسال..." : "ارسال پرسشنامه"}
+          ارسال پرسشنامه
         </button>
-        {error && <p className="text-red-500 mr-4 mt-2">{error}</p>}
       </div>
     </form>
   );

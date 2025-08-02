@@ -1,45 +1,37 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.ServiceContractors;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
-type Answers = Record<string, string | number>;
-
-interface Category {
-  title: string;
-  questions: string[];
-}
+type Answers = Record<string, string | number | string[]>;
 
 export default function ServiceContractorsSurvey() {
-  const categoryEntries = Object.entries(categories).map(
-    ([title, questions]) => ({
-      title,
-      questions: questions as string[],
-    })
-  );
-
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
-  const handleDemoChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
+  const handleDemoChange = (name: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAnswer = (questionId: string, value: number) => {
+  const handleAnswer = (questionId: string, value: number | string) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
   };
 
-  const handleTextChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
+  const handleCheckboxChange = (questionId: string, option: string) => {
+    setAnswers((prev) => {
+      const current = (prev[`q${questionId}`] as string[]) || [];
+      const updated = current.includes(option)
+        ? current.filter((item) => item !== option)
+        : [...current, option];
+      return { ...prev, [`q${questionId}`]: updated };
+    });
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -47,21 +39,26 @@ export default function ServiceContractorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه پیمانکاران خدماتی با موفقیت ارسال شد!");
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
       setAnswers({});
+      (e.target as HTMLFormElement).reset();
     } catch (err) {
-      setError("خطا در ارسال اطلاعات");
       console.error(err);
+      setError("خطا در ارسال اطلاعات");
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
   };
+
+  const categoryEntries = Object.entries(categories);
 
   return (
     <div className="w-full mx-auto p-6">
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
         پرسشنامه پیمانکاران خدماتی
       </h1>
+
       <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
@@ -69,32 +66,30 @@ export default function ServiceContractorsSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
-                {label}
-              </label>
+              <p className="text-lg font-semibold mb-2">{label}</p>
               {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
+                <div className="flex flex-wrap gap-3">
                   {options.split(",").map((option) => (
-                    <option key={option} value={option}>
+                    <label key={option} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={answers[key] === option}
+                        onChange={(e) => handleDemoChange(key, e.target.value)}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-                </select>
+                </div>
               ) : (
                 <input
-                  id={key}
-                  name={key}
                   type="text"
-                  value={answers[key] || ""}
-                  onChange={handleDemoChange}
+                  name={key}
+                  value={(answers[key] as string) || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
                 />
@@ -103,41 +98,29 @@ export default function ServiceContractorsSurvey() {
           ))}
         </div>
 
-        {categoryEntries.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="mb-8">
+        {categoryEntries.map(([title, questions], categoryIndex) => (
+          <div key={categoryIndex} className="mb-10">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
-              {category.title}
+              {title}
             </h2>
             <table className="border-collapse border border-gray-300 w-full mb-4">
               <thead>
                 <tr>
                   <th className="border border-gray-300 px-4 py-2">ردیف</th>
                   <th className="border border-gray-300 px-4 py-2">سوال</th>
-                  <th className="border border-gray-300 px-4 py-2" colSpan={5}>
+                  <th
+                    className="border border-gray-300 px-4 py-2 text-center"
+                    colSpan={5}
+                  >
                     میزان رضایت / پاسخ
                   </th>
                 </tr>
-                <tr>
-                  <th
-                    className="border border-gray-300 px-4 py-2"
-                    colSpan={2}
-                  ></th>
-                  {[1, 2, 3, 4, 5].map((score) => (
-                    <th
-                      key={score}
-                      className="border border-gray-300 px-4 py-2 text-center"
-                    >
-                      {score}
-                    </th>
-                  ))}
-                </tr>
               </thead>
               <tbody>
-                {category.questions.map((question, index) => {
+                {(questions as string[]).map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-
-                  const isFirstTextQuestion =
-                    category.title === "اطلاع رسانی" && index === 0;
+                  const isCheckboxQuestion =
+                    title === "اطلاع رسانی" && index === 0;
 
                   return (
                     <tr key={questionId}>
@@ -147,21 +130,38 @@ export default function ServiceContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFirstTextQuestion ? (
+                      {isCheckboxQuestion ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
                         >
-                          <input
-                            type="text"
-                            name={`q${questionId}`}
-                            value={answers[`q${questionId}`] || ""}
-                            onChange={(e) =>
-                              handleTextChange(questionId, e.target.value)
-                            }
-                            className="w-full border border-gray-300 p-2 rounded"
-                            placeholder="پاسخ خود را وارد کنید"
-                          />
+                          <div className="flex flex-wrap gap-4">
+                            {[
+                              "پایگاه اطلاع رسانی مناقصات",
+                              "شانا",
+                              "برد شرکت گاز",
+                              "سایت شرکت",
+                            ].map((option) => (
+                              <label
+                                key={option}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="checkbox"
+                                  name={`q${questionId}`}
+                                  value={option}
+                                  checked={(
+                                    answers[`q${questionId}`] as string[]
+                                  )?.includes(option)}
+                                  onChange={() =>
+                                    handleCheckboxChange(questionId, option)
+                                  }
+                                  className="w-5 h-5"
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
                         </td>
                       ) : (
                         [1, 2, 3, 4, 5].map((score) => (
@@ -199,7 +199,7 @@ export default function ServiceContractorsSurvey() {
             </label>
             <textarea
               name="criticisms"
-              value={answers["criticisms"] || ""}
+              value={(answers["criticisms"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, criticisms: e.target.value }))
               }
@@ -213,7 +213,7 @@ export default function ServiceContractorsSurvey() {
             </label>
             <textarea
               name="suggestions"
-              value={answers["suggestions"] || ""}
+              value={(answers["suggestions"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, suggestions: e.target.value }))
               }

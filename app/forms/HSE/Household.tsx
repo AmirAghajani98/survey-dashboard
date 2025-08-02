@@ -1,19 +1,35 @@
 import React, { useState } from "react";
-import questionsData from "../../data/questions.json";
+import questionsData from "../../../data/questions.json";
+import { useToast } from "@/app/components/ToastContext";
 
 export default function HouseholdSurvey() {
   const questions: string[] = questionsData.HouseholdHSE.questions;
-
   const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
   const handleAnswer = (index: number, value: number) => {
     setAnswers({ ...answers, [index]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("پاسخ‌ها:", answers);
-    alert("پرسشنامه با موفقیت ارسال شد!");
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("Answers:", answers);
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+      setAnswers({});
+      (e.target as HTMLFormElement).reset();
+    } catch (err) {
+      console.error(err);
+      setError("خطا در ارسال اطلاعات");
+      showToast("خطا در ارسال اطلاعات!", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,7 +37,7 @@ export default function HouseholdSurvey() {
       <h1 className="text-3xl font-bold mb-10 text-center">
         پرسشنامه اندازه‌گیری فرهنگ بهداشت، ایمنی و محیط زیست (HSE)
         <br />
-        مشترکین خانگی، تجاری و صنعتی (جزء و عمده)
+        مشترکین خانگیی (جزء و عمده)
       </h1>
       <table className="table-auto border-collapse border border-gray-300 w-full mb-6">
         <thead>

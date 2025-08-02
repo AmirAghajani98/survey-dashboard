@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.CommunityRepresentatives;
 const demographics = survey.demographics;
@@ -19,10 +20,9 @@ export default function CommunityRepresentativesSurvey() {
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
-  const handleDemoChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+  const handleDemoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
@@ -38,11 +38,15 @@ export default function CommunityRepresentativesSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه نمایندگان جامعه با موفقیت ارسال شد!");
+
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
       console.error(err);
+
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
@@ -60,25 +64,30 @@ export default function CommunityRepresentativesSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label htmlFor={key} className="text-lg font-semibold mb-2 block">
                 {label}
               </label>
+
               {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
-                  {options.split(",").map((option) => (
-                    <option key={option} value={option}>
+                <div className="flex flex-wrap gap-3">
+                  {(options as string).split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 text-base cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={answers[key] === option}
+                        onChange={handleDemoChange}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-                </select>
+                </div>
               ) : (
                 <input
                   id={key}

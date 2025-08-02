@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const demographics = data.EmployeesHSE.demographics;
 const questions: string[] = data.EmployeesHSE.questions;
@@ -12,9 +13,9 @@ export default function EmployeeSurvey() {
   const [demoAnswers, setDemoAnswers] = useState<DemographicAnswers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
-  const handleDemoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleDemoChange = (name: string, value: string) => {
     setDemoAnswers({ ...demoAnswers, [name]: value });
   };
 
@@ -22,27 +23,25 @@ export default function EmployeeSurvey() {
     setAnswers({ ...answers, [idx]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (Object.keys(answers).length < questions.length) {
-      setError("لطفاً به همه‌ی سوالات پاسخ دهید");
-      return;
-    }
-
     setLoading(true);
     setError("");
 
-    const payload = {
-      demographics: demoAnswers,
-      answers,
-    };
+    try {
+      console.log("Answers:", answers);
 
-    setTimeout(() => {
-      console.log("پاسخ‌ها:", payload);
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
+      setAnswers({});
+    } catch (err) {
+      setError("خطا در ارسال اطلاعات");
+      console.error(err);
+
+      showToast("خطا در ارسال اطلاعات!", "error");
+    } finally {
       setLoading(false);
-      alert("پرسشنامه با موفقیت ارسال شد!");
-    }, 1000);
+    }
   };
 
   return (
@@ -57,24 +56,49 @@ export default function EmployeeSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-              <select
-                id={key}
-                name={key}
-                value={demoAnswers[key] || ""}
-                onChange={handleDemoChange}
-                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-              >
-                <option value="">انتخاب کنید</option>
-                {options &&
-                  options.split(",").map((option) => (
-                    <option key={option} value={option} className="text-base">
+              {label === "محل کار" ? (
+                <input
+                  type="text"
+                  name={key}
+                  value={demoAnswers[key] || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  placeholder="محل کار خود را وارد کنید"
+                  required
+                />
+              ) : options ? (
+                <div className="flex flex-wrap gap-3">
+                  {options.split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={demoAnswers[key] === option}
+                        onChange={(e) => handleDemoChange(key, e.target.value)}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-              </select>
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  name={key}
+                  value={demoAnswers[key] || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  required
+                />
+              )}
             </div>
           ))}
         </div>
@@ -89,12 +113,9 @@ export default function EmployeeSurvey() {
               </th>
             </tr>
             <tr>
-              <th className="border border-gray-300 px-4 py-2" colSpan={2}></th>
+              <th colSpan={2}></th>
               {[1, 2, 3, 4, 5].map((score) => (
-                <th
-                  key={score}
-                  className="border border-gray-300 px-4 py-2 text-center"
-                >
+                <th key={score} className="border border-gray-300 px-4 py-2">
                   {score}
                 </th>
               ))}

@@ -24,6 +24,7 @@
 
 html {
   direction: rtl;
+  width: 100%;
 }
 
 body {
@@ -31,4 +32,18 @@ body {
   color: #333;
   font-family: "Vazirmatn", sans-serif;
   text-align: right;
+}
+@keyframes slideIn {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out;
 }

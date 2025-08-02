@@ -12,7 +12,7 @@ import {
   Filler,
 } from "chart.js";
 import EmployeeSurvey from "../forms/EmployeeSurvey";
-import HouseholdForm from "../forms/HouseholdSurvey";
+import HouseholdForm from "../forms/HSE/Household";
 import {
   UserGroupIcon,
   ClipboardDocumentIcon,
@@ -22,8 +22,8 @@ import {
 import StatsCard from "./StatsCard";
 import FacilityNeighborsSurvey from "../forms/FacilityNeighborsSurvey";
 import EmployeeSatisfactionSurvey from "../forms/EmployeeSatisfactionSurvey";
-import MajorSubscribersSurvey from "../forms/MajorSubscribers";
-import MinorSubscribers from "../forms/MinorSubscribers";
+import MajorSubscribersSurvey from "../forms/MajorSubscribers/Household";
+import MinorSubscribers from "../forms/MinorSubscribers/Household";
 import ApplicantsVisitorsSurvey from "../forms/ApplicantsVisitorsSurvey";
 import CommunityRepresentativesSurvey from "../forms/CommunityRepresentativesSurvey";
 import ServiceContractorsSurvey from "../forms/ServiceContractors";

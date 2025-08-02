@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.MainStakeholders;
 const demographics = survey.demographics;
@@ -15,7 +16,7 @@ export default function MainStakeholdersSurvey() {
       questions: questions as string[],
     })
   );
-
+  const { showToast } = useToast();
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
@@ -38,11 +39,15 @@ export default function MainStakeholdersSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه ذینفعان اصلی با موفقیت ارسال شد!");
+
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
       setAnswers({});
+      (e.target as HTMLFormElement).reset();
     } catch (err) {
-      setError("خطا در ارسال اطلاعات");
       console.error(err);
+      setError("خطا در ارسال اطلاعات");
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
@@ -58,38 +63,21 @@ export default function MainStakeholdersSurvey() {
           {demographics.map(([key, label, options]) => (
             <div
               key={key}
-              className="shadow-sm p-4 rounded-md border border-gray-200"
+              className="shadow-sm p-4 rounded-md border border-gray-200 w-full"
             >
               <label htmlFor={key} className="text-lg font-semibold">
                 {label}
               </label>
-              {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
-                  {options.split(",").map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id={key}
-                  name={key}
-                  type="text"
-                  value={answers[key] || ""}
-                  onChange={handleDemoChange}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                />
-              )}
+
+              <input
+                id={key}
+                name={key}
+                type="text"
+                value={answers[key] || ""}
+                onChange={handleDemoChange}
+                className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                required
+              />
             </div>
           ))}
         </div>

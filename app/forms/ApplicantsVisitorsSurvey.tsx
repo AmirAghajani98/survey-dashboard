@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.ApplicantsVisitors;
 const demographics = survey.demographics;
@@ -20,6 +21,8 @@ export default function ApplicantsVisitorsSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
+  const { showToast } = useToast();
+
   const handleDemoChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -38,18 +41,22 @@ export default function ApplicantsVisitorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه مراجعان/متقاضیان با موفقیت ارسال شد!");
+
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
       console.error(err);
+
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full mx-auto p-6">
+    <div className="w-full mx-auto p-2">
       <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
         پرسشنامه مراجعان / متقاضیان
       </h1>
@@ -60,25 +67,29 @@ export default function ApplicantsVisitorsSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold">
+              <label htmlFor={key} className="block text-lg font-semibold mb-2">
                 {label}
               </label>
               {options ? (
-                <select
-                  id={key}
-                  name={key}
-                  onChange={handleDemoChange}
-                  value={answers[key] || ""}
-                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
-                  required
-                >
-                  <option value="">لطفا انتخاب کنید</option>
-                  {options.split(",").map((option) => (
-                    <option key={option} value={option}>
+                <div className="flex flex-wrap gap-3">
+                  {(options as string).split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 text-base cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={option}
+                        checked={answers[key] === option}
+                        onChange={handleDemoChange}
+                        className="w-5 h-5"
+                        required
+                      />
                       {option}
-                    </option>
+                    </label>
                   ))}
-                </select>
+                </div>
               ) : (
                 <input
                   id={key}
@@ -93,7 +104,6 @@ export default function ApplicantsVisitorsSurvey() {
             </div>
           ))}
         </div>
-
         {categoryEntries.map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
@@ -126,11 +136,12 @@ export default function ApplicantsVisitorsSurvey() {
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
+                  const isOptionsQuestion =
+                    category.title === "اطلاع رسانی" && index === 0;
                   const isFreeText =
                     category.title === "علت مراجعه" ||
-                    (category.title === "اطلاع رسانی" && index === 0) ||
+                    (category.title === "اطلاع رسانی" && index !== 0) ||
                     category.title === "عملکرد";
-
                   return (
                     <tr key={questionId}>
                       <td className="border border-gray-300 px-4 py-2 text-center">
@@ -139,7 +150,39 @@ export default function ApplicantsVisitorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFreeText ? (
+                      {isOptionsQuestion ? (
+                        <td
+                          colSpan={5}
+                          className="border border-gray-300 px-4 py-2"
+                        >
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              "اینترنتی",
+                              "تلفنی",
+                              "تابلو اعلانات حضوری",
+                              "کتابچه راهنما",
+                            ].map((option) => (
+                              <label
+                                key={option}
+                                className="flex items-center gap-2 text-base cursor-pointer"
+                              >
+                                <input
+                                  type="radio"
+                                  name={`q${questionId}`}
+                                  value={option}
+                                  checked={answers[`q${questionId}`] === option}
+                                  onChange={() =>
+                                    handleAnswer(questionId, option)
+                                  }
+                                  className="w-5 h-5"
+                                  required
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
+                        </td>
+                      ) : isFreeText ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
@@ -180,7 +223,6 @@ export default function ApplicantsVisitorsSurvey() {
             </table>
           </div>
         ))}
-
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
             انتقادات و پیشنهادات
@@ -214,7 +256,6 @@ export default function ApplicantsVisitorsSurvey() {
             />
           </div>
         </div>
-
         <div className="flex justify-end space-x-4">
           <button
             type="submit"
