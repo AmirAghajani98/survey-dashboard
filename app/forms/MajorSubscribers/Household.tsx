@@ -12,9 +12,7 @@ const importanceLevels = [
 export default function MajorHouseHold() {
   const categories = questionsData.MajorSubscribers.categories;
   const demographics = questionsData.MajorSubscribers.demographics;
-
   const [answers, setAnswers] = useState<Record<string, any>>({});
-
   const handleChange = (name: string, value: any) => {
     setAnswers({ ...answers, [name]: value });
   };
@@ -28,7 +26,7 @@ export default function MajorHouseHold() {
   return (
     <form onSubmit={handleSubmit} className="p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        (خانگی)فرم نظرسنجی مشترکین عمده
+        فرم نظرسنجی مشترکین عمده (خانگی)
       </h1>
       <p className="mb-6 text-center text-lg">
         مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.

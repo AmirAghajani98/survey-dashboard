@@ -30,10 +30,10 @@ import SuppliersSurvey from "./forms/SuppliersSurvey";
 const Dashboard = () => {
   const [selectedForm, setSelectedForm] = useState("home");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // بستن منو وقتی بیرون کلیک شود
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -41,6 +41,7 @@ const Dashboard = () => {
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsDropdownOpen(false);
+        setOpenSubMenu(null);
       }
     };
 
@@ -72,28 +73,40 @@ const Dashboard = () => {
     { name: "HSE - صنعتی", component: <IndustrialMajor /> },
   ];
 
-  const renderHoverSubMenu = (title: string, filterKey: string) => (
-    <li className="relative group">
-      <div className="flex justify-between items-center py-2 px-4 hover:bg-blue-300 cursor-pointer">
+  const renderControlledSubMenu = (title: string, filterKey: string) => (
+    <li className="relative">
+      <div
+        onClick={() =>
+          setOpenSubMenu(openSubMenu === filterKey ? null : filterKey)
+        }
+        className="flex justify-between items-center py-2 px-4 hover:bg-blue-300 cursor-pointer"
+      >
         {title}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDownIcon
+          className={`w-5 h-5 transition-transform ${
+            openSubMenu === filterKey ? "rotate-180" : ""
+          }`}
+        />
       </div>
-      <ul className="absolute top-0 right-full bg-blue-200 rounded shadow-lg w-48 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-300">
-        {forms
-          .filter((f) => f.name.startsWith(filterKey))
-          .map((subForm, index) => (
-            <li
-              key={index}
-              className="py-2 px-4 hover:bg-blue-300 cursor-pointer"
-              onClick={() => {
-                setSelectedForm(subForm.name);
-                setIsDropdownOpen(false);
-              }}
-            >
-              {subForm.name.replace(`${filterKey} - `, "")}
-            </li>
-          ))}
-      </ul>
+      {openSubMenu === filterKey && (
+        <ul className="absolute top-0 right-full bg-blue-200 rounded shadow-lg w-48 z-10">
+          {forms
+            .filter((f) => f.name.startsWith(filterKey))
+            .map((subForm, index) => (
+              <li
+                key={index}
+                className="py-2 px-4 hover:bg-blue-300 cursor-pointer"
+                onClick={() => {
+                  setSelectedForm(subForm.name);
+                  setIsDropdownOpen(false);
+                  setOpenSubMenu(null);
+                }}
+              >
+                {subForm.name.replace(`${filterKey} - `, "")}
+              </li>
+            ))}
+        </ul>
+      )}
     </li>
   );
 
@@ -105,7 +118,6 @@ const Dashboard = () => {
           <button className="hover:underline text-blue-950">خروج</button>
         </nav>
       </header>
-
       <div className="flex flex-1 overflow-hidden">
         <aside className="w-64 bg-[#6bb8ff] text-blue-950 p-4 flex-shrink-0">
           <h2 className="text-xl font-bold mb-4">منو</h2>
@@ -139,12 +151,11 @@ const Dashboard = () => {
                       }`}
                     />
                   </div>
-
                   {isDropdownOpen && (
-                    <ul className="absolute top-10 bg-blue-100 rounded shadow-lg w-56 p-2">
-                      {renderHoverSubMenu("مشترکین جز", "مشترکین جز")}
-                      {renderHoverSubMenu("مشترکین عمده", "مشترکین عمده")}
-                      {renderHoverSubMenu("HSE (جز و عمده)", "HSE")}
+                    <ul className="top-10 bg-blue-100 rounded shadow-lg w-56 p-2">
+                      {renderControlledSubMenu("مشترکین جز", "مشترکین جز")}
+                      {renderControlledSubMenu("مشترکین عمده", "مشترکین عمده")}
+                      {renderControlledSubMenu("HSE (جز و عمده)", "HSE")}
                       {forms
                         .filter(
                           (f) =>
@@ -159,6 +170,7 @@ const Dashboard = () => {
                             onClick={() => {
                               setSelectedForm(form.name);
                               setIsDropdownOpen(false);
+                              setOpenSubMenu(null);
                             }}
                           >
                             {form.name}
@@ -171,11 +183,10 @@ const Dashboard = () => {
             </ul>
           </nav>
         </aside>
-
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
           {selectedForm === "home" && <Charts />}
           {selectedForm !== "home" && (
-            <div className="p-4 bg-white rounded shadow-md">
+            <div className="p-4 bg-white rounded shadow-md w-11/12 mx-auto">
               {forms.find((form) => form.name === selectedForm)?.component || (
                 <p>فرم انتخاب شده یافت نشد.</p>
               )}

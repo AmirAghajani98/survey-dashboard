@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const demographics = data.EmployeesHSE.demographics;
 const questions: string[] = data.EmployeesHSE.questions;
@@ -12,6 +13,7 @@ export default function EmployeeSurvey() {
   const [demoAnswers, setDemoAnswers] = useState<DemographicAnswers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
   const handleDemoChange = (name: string, value: string) => {
     setDemoAnswers({ ...demoAnswers, [name]: value });
@@ -21,27 +23,25 @@ export default function EmployeeSurvey() {
     setAnswers({ ...answers, [idx]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (Object.keys(answers).length < questions.length) {
-      setError("لطفاً به همه‌ی سوالات پاسخ دهید");
-      return;
-    }
-
     setLoading(true);
     setError("");
 
-    const payload = {
-      demographics: demoAnswers,
-      answers,
-    };
+    try {
+      console.log("Answers:", answers);
 
-    setTimeout(() => {
-      console.log("پاسخ‌ها:", payload);
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
+      setAnswers({});
+    } catch (err) {
+      setError("خطا در ارسال اطلاعات");
+      console.error(err);
+
+      showToast("خطا در ارسال اطلاعات!", "error");
+    } finally {
       setLoading(false);
-      alert("پرسشنامه با موفقیت ارسال شد!");
-    }, 1000);
+    }
   };
 
   return (
@@ -59,7 +59,6 @@ export default function EmployeeSurvey() {
               <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-              {/* فقط محل کار متن باشد */}
               {label === "محل کار" ? (
                 <input
                   type="text"

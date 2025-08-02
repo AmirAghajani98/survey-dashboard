@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.MainStakeholders;
 const demographics = survey.demographics;
@@ -15,7 +16,7 @@ export default function MainStakeholdersSurvey() {
       questions: questions as string[],
     })
   );
-
+  const { showToast } = useToast();
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
@@ -38,11 +39,15 @@ export default function MainStakeholdersSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه ذینفعان اصلی با موفقیت ارسال شد!");
+
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
       setAnswers({});
+      (e.target as HTMLFormElement).reset();
     } catch (err) {
-      setError("خطا در ارسال اطلاعات");
       console.error(err);
+      setError("خطا در ارسال اطلاعات");
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }

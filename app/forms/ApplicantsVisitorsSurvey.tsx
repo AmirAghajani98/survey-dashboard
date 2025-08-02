@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from "../../data/questions.json";
+import { useToast } from "../components/ToastContext";
 
 const survey = data.ApplicantsVisitors;
 const demographics = survey.demographics;
@@ -20,6 +21,8 @@ export default function ApplicantsVisitorsSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
+  const { showToast } = useToast();
+
   const handleDemoChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -38,11 +41,15 @@ export default function ApplicantsVisitorsSurvey() {
 
     try {
       console.log("Answers:", answers);
-      alert("پرسشنامه مراجعان/متقاضیان با موفقیت ارسال شد!");
+
+      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
+
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
       console.error(err);
+
+      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
@@ -63,7 +70,6 @@ export default function ApplicantsVisitorsSurvey() {
               <label htmlFor={key} className="block text-lg font-semibold mb-2">
                 {label}
               </label>
-
               {options ? (
                 <div className="flex flex-wrap gap-3">
                   {(options as string).split(",").map((option) => (
@@ -98,7 +104,6 @@ export default function ApplicantsVisitorsSurvey() {
             </div>
           ))}
         </div>
-
         {categoryEntries.map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
@@ -131,15 +136,12 @@ export default function ApplicantsVisitorsSurvey() {
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-
                   const isOptionsQuestion =
                     category.title === "اطلاع رسانی" && index === 0;
-
                   const isFreeText =
                     category.title === "علت مراجعه" ||
                     (category.title === "اطلاع رسانی" && index !== 0) ||
                     category.title === "عملکرد";
-
                   return (
                     <tr key={questionId}>
                       <td className="border border-gray-300 px-4 py-2 text-center">
@@ -148,7 +150,6 @@ export default function ApplicantsVisitorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-
                       {isOptionsQuestion ? (
                         <td
                           colSpan={5}
@@ -222,7 +223,6 @@ export default function ApplicantsVisitorsSurvey() {
             </table>
           </div>
         ))}
-
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
             انتقادات و پیشنهادات
@@ -256,7 +256,6 @@ export default function ApplicantsVisitorsSurvey() {
             />
           </div>
         </div>
-
         <div className="flex justify-end space-x-4">
           <button
             type="submit"

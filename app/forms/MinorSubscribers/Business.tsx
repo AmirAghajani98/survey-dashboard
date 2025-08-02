@@ -28,7 +28,7 @@ export default function MinorBusiness() {
   return (
     <form onSubmit={handleSubmit} className="p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        (خانگی)فرم نظرسنجی مشترکین عمده
+        فرم نظرسنجی مشترکین عمده (تجاری)
       </h1>
       <p className="mb-6 text-center text-lg">
         مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.
