@@ -114,8 +114,12 @@ const Dashboard = () => {
     <main className="flex flex-col h-screen overflow-hidden">
       <header className="bg-[#97ceff] text-slate-900 p-4 flex-shrink-0">
         <nav className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">داشبورد</h1>
-          <button className="hover:underline text-blue-950">خروج</button>
+          <h1 className="text-xl font-bold mx-4">
+            سامانه نظر سنجی اداره گاز استان قزوین
+          </h1>
+          <button className="hover:underline text-blue-950 bg-sky-200 py-1 px-3 rounded-xl">
+            خروج
+          </button>
         </nav>
       </header>
       <div className="flex flex-1 overflow-hidden">
