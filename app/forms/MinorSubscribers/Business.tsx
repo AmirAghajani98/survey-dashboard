@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import questionsData from "../../../data/questions.json";
 
@@ -26,7 +28,10 @@ export default function MinorBusiness() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 shadow-xl bg-white w-11/12 mx-auto my-4 rounded-xl"
+    >
       <h1 className="text-3xl font-bold mb-6 text-center">
         فرم نظرسنجی مشترکین عمده (تجاری)
       </h1>

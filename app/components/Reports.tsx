@@ -94,7 +94,10 @@ const Reports: React.FC = () => {
   );
 
   return (
-    <div dir="rtl" className="space-y-8 bg-slate-100 w-full">
+    <div
+      dir="rtl"
+      className="space-y-8 bg-slate-100 w-[96%] min-h-screen mt-6 mx-auto"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="تعداد مشترکین"
@@ -165,14 +168,14 @@ const Reports: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {forms.map((f) => (
           <div key={f.name} className="bg-white rounded-xl shadow-sm p-6">
             <h4 className="text-md font-medium text-gray-800 mb-4">{f.name}</h4>
             {f.component}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

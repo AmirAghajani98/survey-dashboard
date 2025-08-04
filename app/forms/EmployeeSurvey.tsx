@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import data from "../../data/questions.json";
 import { useToast } from "../components/ToastContext";
@@ -45,11 +47,14 @@ export default function EmployeeSurvey() {
   };
 
   return (
-    <div className="w-full mx-auto p-6">
-      <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-        پرسشنامه HSE کارکنان
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-6 w-full m-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 shadow-xl bg-white w-11/12 mx-auto my-4 rounded-xl"
+    >
+      <div className="w-full mx-auto p-6">
+        <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
+          پرسشنامه HSE کارکنان
+        </h1>
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
             <div
@@ -160,7 +165,7 @@ export default function EmployeeSurvey() {
           </button>
           {error && <p className="text-red-500">{error}</p>}
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }
