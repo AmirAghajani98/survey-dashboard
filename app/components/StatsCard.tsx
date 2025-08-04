@@ -43,7 +43,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
         </div>
         <div className="flex items-center justify-center w-full gap-11 h-1/2">
           <p className="text-sm text-red-600 mt-1">{log}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+          <span className="text-3xl font-bold text-gray-900 mt-2">{value}</span>
         </div>
       </div>
     </>
