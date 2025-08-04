@@ -6,10 +6,9 @@ import {
   ChartBarIcon,
   DocumentTextIcon,
   ChevronDownIcon,
-  BellAlertIcon,
 } from "@heroicons/react/24/outline";
 
-import Charts from "./components/Charts";
+import Charts from "./components/Reports";
 import EmployeeSurvey from "./forms/EmployeeSurvey";
 import SatisfactionSurvey from "./forms/EmployeeSatisfactionSurvey";
 import HouseholdSurvey from "./forms/HSE/Household";
@@ -218,7 +217,7 @@ const Dashboard = () => {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-100">
           {selectedForm === "home" && <Charts />}
           {selectedForm !== "home" && (
             <div className="p-4 bg-white rounded shadow-md w-11/12 mx-auto">
