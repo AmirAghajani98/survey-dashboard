@@ -8,7 +8,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 
-import Charts from "./components/Charts";
+import Charts from "./components/Reports";
 import EmployeeSurvey from "./forms/EmployeeSurvey";
 import SatisfactionSurvey from "./forms/EmployeeSatisfactionSurvey";
 import HouseholdSurvey from "./forms/HSE/Household";
@@ -111,33 +111,62 @@ const Dashboard = () => {
   );
 
   return (
-    <main className="flex flex-col h-screen overflow-hidden">
-      <header className="bg-[#97ceff] text-slate-900 p-4 flex-shrink-0">
-        <nav className="flex justify-between items-center">
-          <h1 className="text-xl font-bold mx-4">
-            سامانه نظر سنجی اداره گاز استان قزوین
-          </h1>
-          <button className="hover:underline text-blue-950 bg-sky-200 py-1 px-3 rounded-xl">
-            خروج
-          </button>
-        </nav>
+    <main className="flex flex-col h-screen overflow-hidden bg-gray-100">
+      <header className="bg-[#97ceff] text-slate-900 p-6 shadow-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <button
+              id="sidebarToggle"
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <i className="fas fa-bars text-xl"></i>
+            </button>
+
+            <div>
+              <h2 id="pageTitle" className="text-2xl font-bold text-gray-800">
+                سامانه نظر سنجی{" "}
+              </h2>
+              <p className="text-sm text-gray-500"></p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2">
+              <i className="fas fa-calendar text-gray-400"></i>
+              <select className="bg-transparent text-sm font-medium text-gray-700 border-none outline-none">
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 3 months</option>
+                <option>Custom range</option>
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">JD</span>
+              </div>
+              <div className="hidden md:block">
+                <p className="text-sm font-medium text-gray-700">John Doe</p>
+                <p className="text-xs text-gray-500">Administrator</p>
+              </div>
+              <button className="text-gray-400 hover:text-gray-600">
+                <i className="fas fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </header>
+
       <div className="flex flex-1 overflow-hidden">
         <aside className="w-64 bg-[#6bb8ff] text-blue-950 p-4 flex-shrink-0">
           <h2 className="text-xl font-bold mb-4">منو</h2>
           <nav>
             <ul className="space-y-2">
-              <li
-                className="flex items-center space-x-2 hover:bg-blue-400 cursor-pointer"
-                onClick={() => setSelectedForm("home")}
-              >
+              <li className="flex items-center space-x-2 hover:bg-blue-400 cursor-pointer">
                 <HomeIcon className="w-8 h-8 text-slate-700" />
                 <span className="text-lg">صفحه اصلی</span>
               </li>
-              <li
-                className="flex items-center space-x-2 hover:bg-blue-400 cursor-pointer"
-                onClick={() => setSelectedForm("report")}
-              >
+              <li className="flex items-center space-x-2 hover:bg-blue-400 cursor-pointer">
                 <ChartBarIcon className="w-8 h-8 text-slate-700 " />
                 <span className="text-lg">گزارشات</span>
               </li>
@@ -187,7 +216,8 @@ const Dashboard = () => {
             </ul>
           </nav>
         </aside>
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-100">
           {selectedForm === "home" && <Charts />}
           {selectedForm !== "home" && (
             <div className="p-4 bg-white rounded shadow-md w-11/12 mx-auto">
