@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import questionsData from "../../../data/questions.json";
-import { useToast } from "@/app/components/ToastContext";
 
 export default function IndustrialSurvey() {
   const questions: string[] = questionsData.HouseholdHSE.questions;
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
-  const { showToast } = useToast();
 
   const handleAnswer = (index: number, value: number) => {
     setAnswers({ ...answers, [index]: value });
@@ -22,13 +20,11 @@ export default function IndustrialSurvey() {
 
     try {
       console.log("Answers:", answers);
-      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
       setAnswers({});
       (e.target as HTMLFormElement).reset();
     } catch (err) {
       console.error(err);
       setError("خطا در ارسال اطلاعات");
-      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }

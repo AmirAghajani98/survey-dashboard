@@ -9,11 +9,9 @@ import {
   Bars3Icon,
   BellIcon,
 } from "@heroicons/react/24/outline";
-import Reports from "./Reports";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavigationProps {
-  selected: string;
-  onSelect: (key: string) => void;
   children?: ReactNode;
 }
 
@@ -38,10 +36,12 @@ const formNames = [
   "HSE - صنعتی",
 ];
 
-const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
+const Navigation: FC<NavigationProps> = ({ children }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -78,11 +78,15 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
               <li
                 key={i}
                 onClick={() => {
-                  onSelect(name);
+                  router.push(`/forms/${encodeURIComponent(name)}`);
                   setIsDropdownOpen(false);
                   setOpenSubMenu(null);
                 }}
-                className="py-2 px-4 hover:bg-blue-200 cursor-pointer"
+                className={`py-2 px-4 cursor-pointer hover:bg-blue-200 ${
+                  pathname === `/forms/${encodeURIComponent(name)}`
+                    ? "bg-blue-300 text-white"
+                    : ""
+                }`}
               >
                 {name.replace(`${key} - `, "")}
               </li>
@@ -99,7 +103,7 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
           <div className="flex items-center space-x-4">
             <button
               className="lg:hidden text-gray-500 hover:text-gray-700"
-              onClick={() => onSelect("toggleSidebar")}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <Bars3Icon className="w-6 h-6" />
             </button>
@@ -116,12 +120,12 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
               title="اطلاعیه‌ها"
             >
               <BellIcon className="w-6 h-6" />
-              <span className="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                 3
               </span>
             </div>
             <button
-              onClick={() => onSelect("logout")}
+              onClick={() => router.push("/login")}
               className="hover:underline text-blue-950 bg-sky-200 py-1 px-3 rounded-xl"
             >
               خروج
@@ -131,7 +135,7 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-64 bg-white shadow-lg z-50 sidebar-transition flex-shrink-0">
+        <aside className="w-64 bg-white shadow-lg z-50 flex-shrink-0">
           <div className="py-4 border-b border-gray-200 px-6">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
@@ -143,6 +147,7 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
               </div>
             </div>
           </div>
+
           <nav className="mt-4">
             <div className="px-6 mb-2">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -151,9 +156,9 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
             </div>
 
             <div
-              onClick={() => onSelect("home")}
+              onClick={() => router.push("/")}
               className={`flex items-center px-6 py-3 cursor-pointer transition-colors ${
-                selected === "home"
+                pathname === "/"
                   ? "bg-blue-50 text-blue-600 border-r-4 border-blue-600"
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               }`}
@@ -161,10 +166,11 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
               <HomeIcon className="w-5 h-5 ml-3" />
               <span>صفحه اصلی</span>
             </div>
+
             <div
-              onClick={() => onSelect("reports")}
+              onClick={() => router.push("/reports")}
               className={`flex items-center px-6 py-3 cursor-pointer transition-colors ${
-                selected === "report"
+                pathname === "/reports"
                   ? "bg-blue-50 text-blue-600 border-r-4 border-blue-600"
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               }`}
@@ -179,7 +185,6 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
               </p>
             </div>
 
-            {/* منوی فرم‌ها */}
             <div ref={dropdownRef}>
               <div
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -199,7 +204,7 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
                 <ul className="bg-blue-100/80 rounded-b-lg shadow-inner">
                   {renderSubMenu("مشترکین جز", "مشترکین جز")}
                   {renderSubMenu("مشترکین عمده", "مشترکین عمده")}
-                  {renderSubMenu("HSE (جز و عمده)", "HSE")}
+                  {renderSubMenu("HSE", "HSE")}
                   {formNames
                     .filter(
                       (f) =>
@@ -211,10 +216,14 @@ const Navigation: FC<NavigationProps> = ({ selected, onSelect, children }) => {
                       <li
                         key={i}
                         onClick={() => {
-                          onSelect(f);
+                          router.push(`/forms/${encodeURIComponent(f)}`);
                           setIsDropdownOpen(false);
                         }}
-                        className="py-2 px-6 text-gray-700 hover:bg-blue-200 cursor-pointer"
+                        className={`py-2 px-6 text-gray-700 hover:bg-blue-200 cursor-pointer ${
+                          pathname === `/forms/${encodeURIComponent(f)}`
+                            ? "bg-blue-300 text-white"
+                            : ""
+                        }`}
                       >
                         {f}
                       </li>

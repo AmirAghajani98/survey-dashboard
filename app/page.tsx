@@ -1,34 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 import Navigation from "./components/Navigation";
-import ApplicantsVisitorsSurvey from "./forms/ApplicantsVisitorsSurvey";
-import CommunityRepresentativesSurvey from "./forms/CommunityRepresentativesSurvey";
+import Reports from "./reports/page";
 import EmployeeSurvey from "./forms/EmployeeSurvey";
-import ExecutiveContractorsSurvey from "./forms/ExecutiveContractors";
-import FacilityNeighborsSurvey from "./forms/FacilityNeighborsSurvey";
-import BusinessSurvey from "./forms/HSE/Business";
+import EmployeeSatisfactionSurvey from "./forms/EmployeeSatisfactionSurvey";
 import HouseholdSurvey from "./forms/HSE/Household";
-import MainStakeholdersSurvey from "./forms/MainStakeholdersSurvey";
+import BusinessSurvey from "./forms/HSE/Business";
+import MajorIndustrial from "./forms/MajorSubscribers/Industrial";
+import MinorIndustrial from "./forms/MinorSubscribers/Industrial";
+import MinorBusiness from "./forms/MinorSubscribers/Business";
+import MinorHouseHold from "./forms/MinorSubscribers/Household";
+import MajorBusiness from "./forms/MajorSubscribers/Business";
+import MajorHouseHold from "./forms/MajorSubscribers/Household";
+import FacilityNeighborsSurvey from "./forms/FacilityNeighborsSurvey";
+import CommunityRepresentativesSurvey from "./forms/CommunityRepresentativesSurvey";
+import ApplicantsVisitorsSurvey from "./forms/ApplicantsVisitorsSurvey";
+import ExecutiveContractorsSurvey from "./forms/ExecutiveContractors";
 import ServiceContractorsSurvey from "./forms/ServiceContractors";
 import SuppliersSurvey from "./forms/SuppliersSurvey";
-import MajorBusiness from "./forms/MajorSubscribers/Business";
-import MajorIndustrial from "./forms/MajorSubscribers/Industrial";
-import EmployeeSatisfactionSurvey from "./forms/EmployeeSatisfactionSurvey";
-import MajorHouseHold from "./forms/MajorSubscribers/Household";
-import MinorHouseHold from "./forms/MinorSubscribers/Household";
-import MinorBusiness from "./forms/MinorSubscribers/Business";
-import MinorIndustrial from "./forms/MinorSubscribers/Industrial";
-import Reports from "./components/Reports";
+import MainStakeholdersSurvey from "./forms/MainStakeholdersSurvey";
 
-const Dashboard: React.FC = () => {
+export default function Dashboard() {
   const [selected, setSelected] = useState<string>("home");
+  const [checkingSession, setCheckingSession] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push("/login");
+      }
+      setCheckingSession(false);
+    });
+    const { data } = supabase.auth.onAuthStateChange((_, session) => {
+      if (!session) {
+        router.push("/login");
+      }
+    });
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, [router]);
+  if (checkingSession) {
+    return null;
+  }
 
   const renderContent = () => {
     switch (selected) {
       case "home":
         return <p className="p-6">به داشبورد خوش آمدید!</p>;
-      case "reports":
+      case "report":
         return <Reports />;
       case "کارکنان (HSE)":
         return <EmployeeSurvey />;
@@ -66,20 +90,15 @@ const Dashboard: React.FC = () => {
         return <SuppliersSurvey />;
       case "ذینفعان اصلی شرکت":
         return <MainStakeholdersSurvey />;
+
       default:
         return (
           <p className="p-6 text-center text-gray-500">
-            فرم انتخاب‌ شده یافت نشد.
+            فرم انتخاب‌شده یافت نشد.
           </p>
         );
     }
   };
 
-  return (
-    <Navigation selected={selected} onSelect={setSelected}>
-      {renderContent()}
-    </Navigation>
-  );
-};
-
-export default Dashboard;
+  return <Navigation>{renderContent()}</Navigation>;
+}

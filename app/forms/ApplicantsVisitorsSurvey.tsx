@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import data from "../../data/questions.json";
-import { useToast } from "../components/ToastContext";
 
 const survey = data.ApplicantsVisitors;
 const demographics = survey.demographics;
@@ -23,8 +22,6 @@ export default function ApplicantsVisitorsSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const { showToast } = useToast();
-
   const handleDemoChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
@@ -44,14 +41,10 @@ export default function ApplicantsVisitorsSurvey() {
     try {
       console.log("Answers:", answers);
 
-      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
-
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
       console.error(err);
-
-      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }

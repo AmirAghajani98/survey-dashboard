@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import questionsData from "../../data/questions.json";
-import { useToast } from "../components/ToastContext";
 
 const importanceLevels = [
   "خیلی کم/خیلی ضعیف",
@@ -15,8 +14,6 @@ const importanceLevels = [
 export default function FacilityNeighborsSurvey() {
   const categories = questionsData.FacilityNeighbors.categories;
   const demographics = questionsData.FacilityNeighbors.demographics;
-
-  const { showToast } = useToast();
 
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
@@ -33,15 +30,11 @@ export default function FacilityNeighborsSurvey() {
 
     try {
       console.log("Answers:", answers);
-
-      showToast("پرسشنامه با موفقیت ارسال شد!", "success");
-
       setAnswers({});
       (e.target as HTMLFormElement).reset();
     } catch (err) {
       console.error(err);
       setError("خطا در ارسال اطلاعات");
-      showToast("خطا در ارسال اطلاعات!", "error");
     } finally {
       setLoading(false);
     }
