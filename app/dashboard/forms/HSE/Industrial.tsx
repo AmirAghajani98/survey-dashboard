@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import questionsData from "../../../data/questions.json";
+import questionsData from "../../../../data/questions.json";
 
 export default function IndustrialSurvey() {
   const questions: string[] = questionsData.HouseholdHSE.questions;

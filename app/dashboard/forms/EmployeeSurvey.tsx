@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import data from "../../data/questions.json";
+import data from "../../../data/questions.json";
 
 const demographics = data.EmployeesHSE.demographics;
 const questions: string[] = data.EmployeesHSE.questions;

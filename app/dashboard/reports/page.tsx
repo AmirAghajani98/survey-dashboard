@@ -20,11 +20,11 @@ import {
   ArrowLongUpIcon,
   ArrowLongDownIcon,
 } from "@heroicons/react/24/outline";
-import StatsCard from "../components/StatsCard";
+import StatsCard from "../../components/StatsCard";
 import EmployeeSurvey from "../forms/EmployeeSurvey";
 import HouseholdForm from "../forms/HSE/Household";
-import BarChartGrouped from "../components/BarChart";
-import DoughnutChart from "../components/DoughnutChart";
+import BarChartGrouped from "../../components/BarChart";
+import DoughnutChart from "../../components/DoughnutChart";
 
 ChartJS.register(
   ArcElement,

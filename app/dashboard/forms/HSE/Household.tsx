@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import questionsData from "../../../data/questions.json";
+import questionsData from "../../../../data/questions.json";
 
-export default function BusinessSurvey() {
+export default function HouseholdSurvey() {
   const questions: string[] = questionsData.HouseholdHSE.questions;
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function BusinessSurvey() {
       <h1 className="text-3xl font-bold mb-10 text-center">
         پرسشنامه اندازه‌گیری فرهنگ بهداشت، ایمنی و محیط زیست (HSE)
         <br />
-        مشترکین تجاری (جزء و عمده)
+        مشترکین خانگیی (جزء و عمده)
       </h1>
       <table className="table-auto border-collapse border border-gray-300 w-full mb-6">
         <thead>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import questionsData from "../../../data/questions.json";
+import questionsData from "../../../../data/questions.json";
 
 const importanceLevels = [
   "خیلی کم/خیلی ضعیف",
@@ -11,12 +11,11 @@ const importanceLevels = [
   "خیلی زیاد/خیلی خوب",
 ];
 
-export default function MajorBusiness() {
+export default function MinorIndustrial() {
   const categories = questionsData.MajorSubscribers.categories;
   const demographics = questionsData.MajorSubscribers.demographics;
+
   const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>("");
 
   const handleChange = (name: string, value: any) => {
     setAnswers({ ...answers, [name]: value });
@@ -34,7 +33,7 @@ export default function MajorBusiness() {
       className="p-4 shadow-xl bg-white w-11/12 mx-auto my-4 rounded-xl"
     >
       <h1 className="text-3xl font-bold mb-6 text-center">
-        فرم نظرسنجی مشترکین عمده (تجاری)
+        فرم نظرسنجی مشترکین عمده (صنعتی)
       </h1>
       <p className="mb-6 text-center text-lg">
         مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.

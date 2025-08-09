@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import data from "../../data/questions.json";
+import data from "../../../data/questions.json";
 import { ToastContainer, toast } from "react-toastify";
 
 const survey = data.MainStakeholders;

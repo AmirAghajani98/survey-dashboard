@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import data from "../../data/questions.json";
+import data from "../../../data/questions.json";
 
-const survey = data.CommunityRepresentatives;
+const survey = data.ExecutiveContractors;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
-type Answers = Record<string, string | number>;
+type Answers = Record<string, string | number | string[]>;
 
-export default function CommunityRepresentativesSurvey() {
+export default function ExecutiveContractorsSurvey() {
   const categoryEntries = Object.entries(categories).map(
     ([title, questions]) => ({
       title,
@@ -22,13 +22,33 @@ export default function CommunityRepresentativesSurvey() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setAnswers((prev) => ({ ...prev, [name]: value }));
+  const handleDemoChange = (key: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleAnswer = (questionId: string, value: number) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
+  };
+
+  const handleTextChange = (questionId: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
+  };
+
+  const handleCheckboxChange = (questionId: string, value: string) => {
+    setAnswers((prev) => {
+      const currentValues = (prev[`q${questionId}`] as string[]) || [];
+      if (currentValues.includes(value)) {
+        return {
+          ...prev,
+          [`q${questionId}`]: currentValues.filter((v) => v !== value),
+        };
+      } else {
+        return {
+          ...prev,
+          [`q${questionId}`]: [...currentValues, value],
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +58,6 @@ export default function CommunityRepresentativesSurvey() {
 
     try {
       console.log("Answers:", answers);
-
       setAnswers({});
     } catch (err) {
       setError("خطا در ارسال اطلاعات");
@@ -55,7 +74,7 @@ export default function CommunityRepresentativesSurvey() {
     >
       <div className="w-full mx-auto p-6">
         <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-          پرسشنامه نمایندگان جامعه
+          پرسشنامه پیمانکاران اجرایی
         </h1>
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
@@ -63,23 +82,22 @@ export default function CommunityRepresentativesSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label htmlFor={key} className="text-lg font-semibold mb-2 block">
+              <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-
               {options ? (
                 <div className="flex flex-wrap gap-3">
-                  {(options as string).split(",").map((option) => (
+                  {options.split(",").map((option) => (
                     <label
                       key={option}
-                      className="flex items-center gap-2 text-base cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer"
                     >
                       <input
                         type="radio"
                         name={key}
                         value={option}
                         checked={answers[key] === option}
-                        onChange={handleDemoChange}
+                        onChange={(e) => handleDemoChange(key, e.target.value)}
                         className="w-5 h-5"
                         required
                       />
@@ -89,11 +107,10 @@ export default function CommunityRepresentativesSurvey() {
                 </div>
               ) : (
                 <input
-                  id={key}
-                  name={key}
                   type="text"
-                  value={answers[key] || ""}
-                  onChange={handleDemoChange}
+                  name={key}
+                  value={(answers[key] as string) || ""}
+                  onChange={(e) => handleDemoChange(key, e.target.value)}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
                 />
@@ -113,27 +130,16 @@ export default function CommunityRepresentativesSurvey() {
                   <th className="border border-gray-300 px-4 py-2">ردیف</th>
                   <th className="border border-gray-300 px-4 py-2">سوال</th>
                   <th className="border border-gray-300 px-4 py-2" colSpan={5}>
-                    میزان رضایت
+                    میزان رضایت / پاسخ
                   </th>
-                </tr>
-                <tr>
-                  <th
-                    className="border border-gray-300 px-4 py-2"
-                    colSpan={2}
-                  ></th>
-                  {[1, 2, 3, 4, 5].map((score) => (
-                    <th
-                      key={score}
-                      className="border border-gray-300 px-4 py-2 text-center"
-                    >
-                      {score}
-                    </th>
-                  ))}
                 </tr>
               </thead>
               <tbody>
                 {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
+                  const isFirstInformQuestion =
+                    category.title === "اطلاع رسانی" && index === 0;
+
                   return (
                     <tr key={questionId}>
                       <td className="border border-gray-300 px-4 py-2 text-center">
@@ -142,22 +148,58 @@ export default function CommunityRepresentativesSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {[1, 2, 3, 4, 5].map((score) => (
+                      {isFirstInformQuestion ? (
                         <td
-                          key={score}
-                          className="border border-gray-300 px-4 py-2 text-center"
+                          colSpan={5}
+                          className="border border-gray-300 px-4 py-2"
                         >
-                          <input
-                            type="radio"
-                            name={`q${questionId}`}
-                            value={score}
-                            checked={answers[`q${questionId}`] === score}
-                            onChange={() => handleAnswer(questionId, score)}
-                            required
-                            className="form-radio w-6 h-6 mx-auto"
-                          />
+                          <div className="flex flex-wrap gap-4">
+                            {[
+                              "پايگاه اطلاع رساني مناقصات",
+                              "شانا",
+                              "برد شركت گاز",
+                              "از طريق سايت شركت",
+                            ].map((option) => (
+                              <label
+                                key={option}
+                                className="flex items-center gap-2 cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  name={`q${questionId}`}
+                                  value={option}
+                                  checked={(
+                                    (answers[`q${questionId}`] as string[]) ||
+                                    []
+                                  ).includes(option)}
+                                  onChange={() =>
+                                    handleCheckboxChange(questionId, option)
+                                  }
+                                  className="w-5 h-5"
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
                         </td>
-                      ))}
+                      ) : (
+                        [1, 2, 3, 4, 5].map((score) => (
+                          <td
+                            key={score}
+                            className="border border-gray-300 px-4 py-2 text-center"
+                          >
+                            <input
+                              type="radio"
+                              name={`q${questionId}`}
+                              value={score}
+                              checked={answers[`q${questionId}`] === score}
+                              onChange={() => handleAnswer(questionId, score)}
+                              required
+                              className="form-radio w-6 h-6 mx-auto"
+                            />
+                          </td>
+                        ))
+                      )}
                     </tr>
                   );
                 })}
@@ -176,7 +218,7 @@ export default function CommunityRepresentativesSurvey() {
             </label>
             <textarea
               name="criticisms"
-              value={answers["criticisms"] || ""}
+              value={(answers["criticisms"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, criticisms: e.target.value }))
               }
@@ -190,7 +232,7 @@ export default function CommunityRepresentativesSurvey() {
             </label>
             <textarea
               name="suggestions"
-              value={answers["suggestions"] || ""}
+              value={(answers["suggestions"] as string) || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, suggestions: e.target.value }))
               }

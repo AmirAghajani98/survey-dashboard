@@ -1,36 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import data from "../../data/questions.json";
+import data from "../../../data/questions.json";
 
-const survey = data.Suppliers;
+const survey = data.ApplicantsVisitors;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
-type Answers = Record<string, string | number | string[]>;
+type Answers = Record<string, string | number>;
 
-export default function SuppliersSurvey() {
+export default function ApplicantsVisitorsSurvey() {
+  const categoryEntries = Object.entries(categories).map(
+    ([title, questions]) => ({
+      title,
+      questions: questions as string[],
+    })
+  );
+
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (name: string, value: string) => {
+  const handleDemoChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
     setAnswers((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAnswer = (questionId: string, value: number | string) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
-  };
-
-  const handleCheckboxChange = (questionId: string, option: string) => {
-    setAnswers((prev) => {
-      const current = (prev[`q${questionId}`] as string[]) || [];
-      const updated = current.includes(option)
-        ? current.filter((item) => item !== option)
-        : [...current, option];
-      return { ...prev, [`q${questionId}`]: updated };
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,26 +40,24 @@ export default function SuppliersSurvey() {
 
     try {
       console.log("Answers:", answers);
+
       setAnswers({});
-      (e.target as HTMLFormElement).reset();
     } catch (err) {
-      console.error(err);
       setError("خطا در ارسال اطلاعات");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
-
-  const categoryEntries = Object.entries(categories);
 
   return (
     <form
       onSubmit={handleSubmit}
       className="p-4 shadow-xl bg-white w-11/12 mx-auto my-4 rounded-xl"
     >
-      <div className="w-full mx-auto p-6">
+      <div className="w-full mx-auto p-2">
         <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-          پرسشنامه تأمین‌کنندگان
+          پرسشنامه مراجعان / متقاضیان
         </h1>
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
@@ -67,17 +65,22 @@ export default function SuppliersSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <p className="text-lg font-semibold mb-2">{label}</p>
+              <label htmlFor={key} className="block text-lg font-semibold mb-2">
+                {label}
+              </label>
               {options ? (
                 <div className="flex flex-wrap gap-3">
-                  {options.split(",").map((option) => (
-                    <label key={option} className="flex items-center gap-2">
+                  {(options as string).split(",").map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 text-base cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name={key}
                         value={option}
                         checked={answers[key] === option}
-                        onChange={(e) => handleDemoChange(key, e.target.value)}
+                        onChange={handleDemoChange}
                         className="w-5 h-5"
                         required
                       />
@@ -87,10 +90,11 @@ export default function SuppliersSurvey() {
                 </div>
               ) : (
                 <input
-                  type="text"
+                  id={key}
                   name={key}
-                  value={(answers[key] as string) || ""}
-                  onChange={(e) => handleDemoChange(key, e.target.value)}
+                  type="text"
+                  value={answers[key] || ""}
+                  onChange={handleDemoChange}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
                 />
@@ -98,31 +102,44 @@ export default function SuppliersSurvey() {
             </div>
           ))}
         </div>
-
-        {categoryEntries.map(([title, questions], categoryIndex) => (
-          <div key={categoryIndex} className="mb-10">
+        {categoryEntries.map((category, categoryIndex) => (
+          <div key={categoryIndex} className="mb-8">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
-              {title}
+              {category.title}
             </h2>
             <table className="border-collapse border border-gray-300 w-full mb-4">
               <thead>
                 <tr>
                   <th className="border border-gray-300 px-4 py-2">ردیف</th>
                   <th className="border border-gray-300 px-4 py-2">سوال</th>
-                  <th
-                    className="border border-gray-300 px-4 py-2 text-center"
-                    colSpan={5}
-                  >
+                  <th className="border border-gray-300 px-4 py-2" colSpan={5}>
                     میزان رضایت / پاسخ
                   </th>
                 </tr>
+                <tr>
+                  <th
+                    className="border border-gray-300 px-4 py-2"
+                    colSpan={2}
+                  ></th>
+                  {[1, 2, 3, 4, 5].map((score) => (
+                    <th
+                      key={score}
+                      className="border border-gray-300 px-4 py-2 text-center"
+                    >
+                      {score}
+                    </th>
+                  ))}
+                </tr>
               </thead>
               <tbody>
-                {(questions as string[]).map((question, index) => {
+                {category.questions.map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-                  const isCheckboxQuestion =
-                    title === "اطلاع رسانی" && index === 0;
-
+                  const isOptionsQuestion =
+                    category.title === "اطلاع رسانی" && index === 0;
+                  const isFreeText =
+                    category.title === "علت مراجعه" ||
+                    (category.title === "اطلاع رسانی" && index !== 0) ||
+                    category.title === "عملکرد";
                   return (
                     <tr key={questionId}>
                       <td className="border border-gray-300 px-4 py-2 text-center">
@@ -131,38 +148,53 @@ export default function SuppliersSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isCheckboxQuestion ? (
+                      {isOptionsQuestion ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
                         >
-                          <div className="flex flex-wrap gap-4">
+                          <div className="flex flex-wrap gap-3">
                             {[
-                              "پایگاه اطلاع رسانی مناقصات",
-                              "شانا",
-                              "برد شرکت گاز",
-                              "سایت شرکت",
+                              "اینترنتی",
+                              "تلفنی",
+                              "تابلو اعلانات حضوری",
+                              "کتابچه راهنما",
                             ].map((option) => (
                               <label
                                 key={option}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-2 text-base cursor-pointer"
                               >
                                 <input
-                                  type="checkbox"
+                                  type="radio"
                                   name={`q${questionId}`}
                                   value={option}
-                                  checked={(
-                                    answers[`q${questionId}`] as string[]
-                                  )?.includes(option)}
+                                  checked={answers[`q${questionId}`] === option}
                                   onChange={() =>
-                                    handleCheckboxChange(questionId, option)
+                                    handleAnswer(questionId, option)
                                   }
                                   className="w-5 h-5"
+                                  required
                                 />
                                 {option}
                               </label>
                             ))}
                           </div>
+                        </td>
+                      ) : isFreeText ? (
+                        <td
+                          colSpan={5}
+                          className="border border-gray-300 px-4 py-2"
+                        >
+                          <input
+                            type="text"
+                            name={`q${questionId}`}
+                            value={answers[`q${questionId}`] || ""}
+                            onChange={(e) =>
+                              handleAnswer(questionId, e.target.value)
+                            }
+                            className="w-full border border-gray-300 p-2 rounded"
+                            placeholder="پاسخ خود را وارد کنید"
+                          />
                         </td>
                       ) : (
                         [1, 2, 3, 4, 5].map((score) => (
@@ -189,7 +221,6 @@ export default function SuppliersSurvey() {
             </table>
           </div>
         ))}
-
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
             انتقادات و پیشنهادات
@@ -200,7 +231,7 @@ export default function SuppliersSurvey() {
             </label>
             <textarea
               name="criticisms"
-              value={(answers["criticisms"] as string) || ""}
+              value={answers["criticisms"] || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, criticisms: e.target.value }))
               }
@@ -214,7 +245,7 @@ export default function SuppliersSurvey() {
             </label>
             <textarea
               name="suggestions"
-              value={(answers["suggestions"] as string) || ""}
+              value={answers["suggestions"] || ""}
               onChange={(e) =>
                 setAnswers((prev) => ({ ...prev, suggestions: e.target.value }))
               }
@@ -223,7 +254,6 @@ export default function SuppliersSurvey() {
             />
           </div>
         </div>
-
         <div className="flex justify-end space-x-4">
           <button
             type="submit"

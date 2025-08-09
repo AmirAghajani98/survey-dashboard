@@ -168,7 +168,7 @@ const Navigation: FC<NavigationProps> = ({ children }) => {
             </div>
 
             <div
-              onClick={() => router.push("/reports")}
+              onClick={() => router.push("/dashboard/reports")}
               className={`flex items-center px-6 py-3 cursor-pointer transition-colors ${
                 pathname === "/reports"
                   ? "bg-blue-50 text-blue-600 border-r-4 border-blue-600"
@@ -216,11 +216,14 @@ const Navigation: FC<NavigationProps> = ({ children }) => {
                       <li
                         key={i}
                         onClick={() => {
-                          router.push(`/forms/${encodeURIComponent(f)}`);
+                          router.push(
+                            `/dashboard/forms/${encodeURIComponent(f)}`
+                          );
                           setIsDropdownOpen(false);
                         }}
                         className={`py-2 px-6 text-gray-700 hover:bg-blue-200 cursor-pointer ${
-                          pathname === `/forms/${encodeURIComponent(f)}`
+                          pathname ===
+                          `/dashboard/forms/${encodeURIComponent(f)}`
                             ? "bg-blue-300 text-white"
                             : ""
                         }`}

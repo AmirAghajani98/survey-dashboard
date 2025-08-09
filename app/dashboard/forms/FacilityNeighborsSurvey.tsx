@@ -11,20 +11,33 @@ const importanceLevels = [
   "خیلی زیاد/خیلی خوب",
 ];
 
-export default function MinorHouseHold() {
-  const categories = questionsData.MajorSubscribers.categories;
-  const demographics = questionsData.MajorSubscribers.demographics;
+export default function FacilityNeighborsSurvey() {
+  const categories = questionsData.FacilityNeighbors.categories;
+  const demographics = questionsData.FacilityNeighbors.demographics;
 
   const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const handleChange = (name: string, value: any) => {
-    setAnswers({ ...answers, [name]: value });
+    setAnswers((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("پاسخ‌ها:", answers);
-    alert("پرسشنامه ارسال شد!");
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("Answers:", answers);
+      setAnswers({});
+      (e.target as HTMLFormElement).reset();
+    } catch (err) {
+      console.error(err);
+      setError("خطا در ارسال اطلاعات");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,11 +46,12 @@ export default function MinorHouseHold() {
       className="p-4 shadow-xl bg-white w-11/12 mx-auto my-4 rounded-xl"
     >
       <h1 className="text-3xl font-bold mb-6 text-center">
-        فرم نظرسنجی مشترکین عمده (خانگی)
+        فرم نظرسنجی همسایگان تأسیسات
       </h1>
       <p className="mb-6 text-center text-lg">
-        مشترک گرامی؛ با سلام و احترام، لطفاً با دقت به سوالات زیر پاسخ دهید.
+        همسایه محترم؛ لطفاً با دقت به سوالات زیر پاسخ دهید.
       </p>
+
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
           اطلاعات دموگرافیک:
@@ -51,7 +65,17 @@ export default function MinorHouseHold() {
               <label className="text-lg font-semibold block mb-2">
                 {label}
               </label>
-              {options ? (
+              {label.includes("فاصله منزل مسكوني") ? (
+                <input
+                  type="text"
+                  name={key}
+                  value={answers[key] || ""}
+                  onChange={(e) => handleChange(key, e.target.value)}
+                  placeholder="مثلاً 200 متر"
+                  className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
+                  required
+                />
+              ) : options ? (
                 <div className="flex flex-wrap gap-3">
                   {options.split(",").map((option) => (
                     <label
@@ -75,6 +99,7 @@ export default function MinorHouseHold() {
                 <input
                   type="text"
                   name={key}
+                  value={answers[key] || ""}
                   onChange={(e) => handleChange(key, e.target.value)}
                   className="mt-2 w-full border border-gray-200 shadow-sm p-2 text-base"
                   required
@@ -84,12 +109,13 @@ export default function MinorHouseHold() {
           ))}
         </div>
       </div>
+
       {Object.entries(categories).map(([category, questions], catIndex) => (
         <div key={catIndex} className="mb-8">
           <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
             {category}
           </h2>
-          <table className="table-auto border-collapse border border-gray-300 w-full mb-8">
+          <table className="border-collapse border border-gray-300 w-full mb-4">
             <thead>
               <tr>
                 <th className="border border-gray-300 px-4 py-2">ردیف</th>
@@ -122,6 +148,10 @@ export default function MinorHouseHold() {
                         type="radio"
                         name={`question-${category}-${index}`}
                         value={idx + 1}
+                        checked={
+                          answers[`question-${category}-${index}`] ===
+                          String(idx + 1)
+                        }
                         onChange={(e) =>
                           handleChange(
                             `question-${category}-${index}`,
@@ -129,6 +159,7 @@ export default function MinorHouseHold() {
                           )
                         }
                         className="form-radio w-5 h-5 mx-auto"
+                        required
                       />
                     </td>
                   ))}
@@ -140,12 +171,13 @@ export default function MinorHouseHold() {
       ))}
 
       <div className="mb-8">
-        <h2 className="font-bold text-lg mb-2">
+        <h2 className="text-xl font-bold mb-4 text-blue-900 pb-2">
           انتقاد یا پیشنهاد نسبت به عملکرد شرکت گاز:
         </h2>
         <textarea
           className="border rounded w-full p-2 mb-2"
           placeholder="انتقادات و پیشنهادات خود را بنویسید..."
+          value={answers["suggestions"] || ""}
           onChange={(e) => handleChange("suggestions", e.target.value)}
         />
       </div>
@@ -153,10 +185,12 @@ export default function MinorHouseHold() {
       <div className="flex justify-end mt-8">
         <button
           type="submit"
+          disabled={loading}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow"
         >
-          ارسال پرسشنامه
+          {loading ? "در حال ارسال..." : "ارسال پرسشنامه"}
         </button>
+        {error && <p className="text-red-500 mr-4 mt-2">{error}</p>}
       </div>
     </form>
   );

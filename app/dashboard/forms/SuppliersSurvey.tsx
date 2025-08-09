@@ -1,53 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import data from "../../data/questions.json";
+import data from "../../../data/questions.json";
 
-const survey = data.ExecutiveContractors;
+const survey = data.Suppliers;
 const demographics = survey.demographics;
 const categories = survey.categories;
 const suggestions = survey.suggestions;
 
 type Answers = Record<string, string | number | string[]>;
 
-export default function ExecutiveContractorsSurvey() {
-  const categoryEntries = Object.entries(categories).map(
-    ([title, questions]) => ({
-      title,
-      questions: questions as string[],
-    })
-  );
-
+export default function SuppliersSurvey() {
   const [answers, setAnswers] = useState<Answers>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const handleDemoChange = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+  const handleDemoChange = (name: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAnswer = (questionId: string, value: number) => {
+  const handleAnswer = (questionId: string, value: number | string) => {
     setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
   };
 
-  const handleTextChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [`q${questionId}`]: value }));
-  };
-
-  const handleCheckboxChange = (questionId: string, value: string) => {
+  const handleCheckboxChange = (questionId: string, option: string) => {
     setAnswers((prev) => {
-      const currentValues = (prev[`q${questionId}`] as string[]) || [];
-      if (currentValues.includes(value)) {
-        return {
-          ...prev,
-          [`q${questionId}`]: currentValues.filter((v) => v !== value),
-        };
-      } else {
-        return {
-          ...prev,
-          [`q${questionId}`]: [...currentValues, value],
-        };
-      }
+      const current = (prev[`q${questionId}`] as string[]) || [];
+      const updated = current.includes(option)
+        ? current.filter((item) => item !== option)
+        : [...current, option];
+      return { ...prev, [`q${questionId}`]: updated };
     });
   };
 
@@ -59,13 +41,16 @@ export default function ExecutiveContractorsSurvey() {
     try {
       console.log("Answers:", answers);
       setAnswers({});
+      (e.target as HTMLFormElement).reset();
     } catch (err) {
-      setError("خطا در ارسال اطلاعات");
       console.error(err);
+      setError("خطا در ارسال اطلاعات");
     } finally {
       setLoading(false);
     }
   };
+
+  const categoryEntries = Object.entries(categories);
 
   return (
     <form
@@ -74,7 +59,7 @@ export default function ExecutiveContractorsSurvey() {
     >
       <div className="w-full mx-auto p-6">
         <h1 className="w-2/3 mx-auto text-3xl font-bold pb-6 mb-10 text-center border-b border-gray-400">
-          پرسشنامه پیمانکاران اجرایی
+          پرسشنامه تأمین‌کنندگان
         </h1>
         <div className="grid grid-cols-2 gap-4 w-full">
           {demographics.map(([key, label, options]) => (
@@ -82,16 +67,11 @@ export default function ExecutiveContractorsSurvey() {
               key={key}
               className="shadow-sm p-4 rounded-md border border-gray-200"
             >
-              <label className="text-lg font-semibold block mb-2">
-                {label}
-              </label>
+              <p className="text-lg font-semibold mb-2">{label}</p>
               {options ? (
                 <div className="flex flex-wrap gap-3">
                   {options.split(",").map((option) => (
-                    <label
-                      key={option}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
+                    <label key={option} className="flex items-center gap-2">
                       <input
                         type="radio"
                         name={key}
@@ -119,26 +99,29 @@ export default function ExecutiveContractorsSurvey() {
           ))}
         </div>
 
-        {categoryEntries.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="mb-8">
+        {categoryEntries.map(([title, questions], categoryIndex) => (
+          <div key={categoryIndex} className="mb-10">
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
-              {category.title}
+              {title}
             </h2>
             <table className="border-collapse border border-gray-300 w-full mb-4">
               <thead>
                 <tr>
                   <th className="border border-gray-300 px-4 py-2">ردیف</th>
                   <th className="border border-gray-300 px-4 py-2">سوال</th>
-                  <th className="border border-gray-300 px-4 py-2" colSpan={5}>
+                  <th
+                    className="border border-gray-300 px-4 py-2 text-center"
+                    colSpan={5}
+                  >
                     میزان رضایت / پاسخ
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {category.questions.map((question, index) => {
+                {(questions as string[]).map((question, index) => {
                   const questionId = `${categoryIndex}_${index}`;
-                  const isFirstInformQuestion =
-                    category.title === "اطلاع رسانی" && index === 0;
+                  const isCheckboxQuestion =
+                    title === "اطلاع رسانی" && index === 0;
 
                   return (
                     <tr key={questionId}>
@@ -148,30 +131,29 @@ export default function ExecutiveContractorsSurvey() {
                       <td className="border border-gray-300 px-4 py-3 text-base font-medium">
                         {question}
                       </td>
-                      {isFirstInformQuestion ? (
+                      {isCheckboxQuestion ? (
                         <td
                           colSpan={5}
                           className="border border-gray-300 px-4 py-2"
                         >
                           <div className="flex flex-wrap gap-4">
                             {[
-                              "پايگاه اطلاع رساني مناقصات",
+                              "پایگاه اطلاع رسانی مناقصات",
                               "شانا",
-                              "برد شركت گاز",
-                              "از طريق سايت شركت",
+                              "برد شرکت گاز",
+                              "سایت شرکت",
                             ].map((option) => (
                               <label
                                 key={option}
-                                className="flex items-center gap-2 cursor-pointer"
+                                className="flex items-center gap-2"
                               >
                                 <input
                                   type="checkbox"
                                   name={`q${questionId}`}
                                   value={option}
                                   checked={(
-                                    (answers[`q${questionId}`] as string[]) ||
-                                    []
-                                  ).includes(option)}
+                                    answers[`q${questionId}`] as string[]
+                                  )?.includes(option)}
                                   onChange={() =>
                                     handleCheckboxChange(questionId, option)
                                   }
