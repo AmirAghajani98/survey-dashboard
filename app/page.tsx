@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import Navigation from "./components/Navigation";
-import Reports from "./dashboard/reports/page";
+import Reports from "./reports/page";
 import EmployeeSurvey from "./dashboard/forms/EmployeeSurvey";
 import EmployeeSatisfactionSurvey from "./dashboard/forms/EmployeeSatisfactionSurvey";
 import HouseholdSurvey from "./dashboard/forms/HSE/Household";
@@ -100,5 +100,5 @@ export default function Dashboard() {
     }
   };
 
-  return <Navigation>{renderContent()}</Navigation>;
+  return <>{renderContent()}</>;
 }

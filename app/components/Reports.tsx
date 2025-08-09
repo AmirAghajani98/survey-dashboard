@@ -20,11 +20,11 @@ import {
   ArrowLongUpIcon,
   ArrowLongDownIcon,
 } from "@heroicons/react/24/outline";
-import StatsCard from "../../components/StatsCard";
-import EmployeeSurvey from "../forms/EmployeeSurvey";
-import HouseholdForm from "../forms/HSE/Household";
-import BarChartGrouped from "../../components/BarChart";
-import DoughnutChart from "../../components/DoughnutChart";
+import BarChartGrouped from "../components/BarChart";
+import DoughnutChart from "../components/DoughnutChart";
+import StatsCard from "../components/StatsCard";
+import EmployeeSurvey from "../dashboard/forms/EmployeeSurvey";
+import HouseholdSurvey from "../dashboard/forms/HSE/Household";
 
 ChartJS.register(
   ArcElement,
@@ -46,10 +46,10 @@ const bluePalette = {
 
 const forms = [
   { name: "کارکنان", component: <EmployeeSurvey /> },
-  { name: "مشترکین خانگی", component: <HouseholdForm /> },
+  { name: "مشترکین خانگی", component: <HouseholdSurvey /> },
 ];
 
-const Reports: React.FC = () => {
+export default function Reports() {
   const [surveyCounts, setSurveyCounts] = useState<number[]>([]);
   const [satisfactionCounts, setSatisfactionCounts] = useState<number[]>([]);
   const [dissatisfactionCounts, setDissatisfactionCounts] = useState<number[]>(
@@ -178,6 +178,4 @@ const Reports: React.FC = () => {
       </div> */}
     </div>
   );
-};
-
-export default Reports;
+}

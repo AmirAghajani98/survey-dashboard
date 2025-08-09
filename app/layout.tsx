@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
+import NavigationWrapper from "./navigateWrapper";
 
 export const metadata: Metadata = {
-  title: "سامانه نظرسنجی",
-  description: "پنل مدیریت فرم‌ها و گزارشات",
+  title: "Survey Dashboard",
+  description: "Gas Co. Survey System",
 };
 
 export default function RootLayout({
@@ -13,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body className="antialiased">
+        <NavigationWrapper>{children}</NavigationWrapper>
+      </body>
     </html>
   );
 }

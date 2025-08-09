@@ -1,18 +1,14 @@
 import { notFound } from "next/navigation";
-import formMap from "../formMap";
+import formMap from "./formMap";
 
-interface FormPageProps {
+export default async function FormPage(props: {
   params: Promise<{ form: string }>;
-}
-
-export default async function FormPage({ params }: FormPageProps) {
-  const { form } = await params; // <-- مهم
+}) {
+  const { form } = await props.params;
   const key = decodeURIComponent(form);
+  const SelectedForm = formMap[key];
 
-  const SelectedFormComponent = formMap[key];
-  if (!SelectedFormComponent) {
-    notFound();
-  }
+  if (!SelectedForm) notFound();
 
-  return <SelectedFormComponent />;
+  return <SelectedForm />;
 }
