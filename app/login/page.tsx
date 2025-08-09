@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../utils/supabase/client";
+import { getSupabaseBrowserClient } from "@/utils/supabase/client";
 
 export default function LoginPage() {
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
+import { getSupabaseBrowserClient } from "@/utils/supabase/client";
 import Reports from "./reports/page";
 import EmployeeSurvey from "./dashboard/forms/EmployeeSurvey";
 import EmployeeSatisfactionSurvey from "./dashboard/forms/EmployeeSatisfactionSurvey";
@@ -26,6 +26,7 @@ export default function Dashboard() {
   const [selected, setSelected] = useState<string>("home");
   const [checkingSession, setCheckingSession] = useState(true);
   const router = useRouter();
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
