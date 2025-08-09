@@ -94,7 +94,6 @@ export default function Navigation({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -122,9 +121,7 @@ export default function Navigation({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Body */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <aside className="w-64 bg-white shadow-lg z-50 sidebar-transition flex-shrink-0">
           <div className="py-4 border-b border-gray-200 px-6">
             <div className="flex items-center gap-3">
