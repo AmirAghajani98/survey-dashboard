@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   HomeIcon,
   ChartBarIcon,
@@ -38,7 +38,6 @@ export default function Navigation({ children }: { children: ReactNode }) {
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
-import Navigation from "./components/Navigation";
 import Reports from "./reports/page";
 import EmployeeSurvey from "./dashboard/forms/EmployeeSurvey";
 import EmployeeSatisfactionSurvey from "./dashboard/forms/EmployeeSatisfactionSurvey";

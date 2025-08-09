@@ -8,6 +8,5 @@ export default function NavigationWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const [dummy, setDummy] = useState(false);
   return <Navigation>{children}</Navigation>;
 }
