@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabase } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
-  const supabase = createServerSupabase();
+  const supabase = createClient();
 
   const { data: user, error } = await supabase
     .from("admin_users")
